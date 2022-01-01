@@ -1,4 +1,4 @@
-import { GenerateFeed } from "./_actions";
+import { GenerateFeed } from "../_actions";
 import type { Metadata } from "next";
 
 export const runtime = "edge";

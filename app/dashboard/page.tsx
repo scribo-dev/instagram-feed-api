@@ -79,11 +79,7 @@ export default async function Page({
 
   return (
     <div className="">
-      <div className="mx-auto max-w-7xl divide-y divide-gray-900/10 px-6 py-24 sm:py-32 lg:px-8 lg:py-40">
-        <h2 className="text-2xl font-bold leading-10 tracking-tight text-gray-900">
-          Dashboard
-        </h2>
-
+      <div className="mx-auto max-w-7xl divide-y divide-gray-900/10 ">
         <div className="pt-4">
           Hello {session?.user?.name}
           {!selectedToken ? (

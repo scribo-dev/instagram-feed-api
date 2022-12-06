@@ -1,7 +1,7 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import chromium from "chrome-aws-lambda";
+const chromium = require("chrome-aws-lambda");
 import playwright from "playwright-core";
 
 type Data = {

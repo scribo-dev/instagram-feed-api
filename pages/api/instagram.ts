@@ -1,7 +1,8 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
 
-const playwright = require("playwright");
+import chromium from "chrome-aws-lambda";
+import playwright from "playwright-core";
 
 type Data = {
   images: string[];
@@ -11,9 +12,19 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const browser = await playwright.chromium.launch({
-    headless: true,
-  });
+  let browser;
+  if (process.env.NODE_ENV !== "development") {
+    browser = await playwright.chromium.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath,
+
+      headless: chromium.headless,
+    });
+  } else {
+    browser = await playwright.chromium.launch({
+      headless: true,
+    });
+  }
   // Open a new page / tab in the browser.
   const page = await browser.newPage({
     bypassCSP: true, // This is needed to enable JavaScript execution on GitHub.

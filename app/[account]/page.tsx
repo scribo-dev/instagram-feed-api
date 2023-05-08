@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { scrape } from "../api/[account]/scrape";
 
+export const runtime = "edge";
+
 async function getData(account: string) {
   let res = await scrape(account);
 

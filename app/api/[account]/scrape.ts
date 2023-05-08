@@ -51,7 +51,7 @@ export async function scrape(account: string) {
       let imageRequest = await fetch(image.image);
 
       let buffer = await imageRequest.arrayBuffer();
-      console.log(filename);
+
       let uploadRequest = await s3Client.send(
         new PutObjectCommand({
           Bucket: "instagram-feed-api",

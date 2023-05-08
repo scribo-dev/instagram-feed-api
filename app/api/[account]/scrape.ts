@@ -60,6 +60,7 @@ export async function scrape(account: string) {
         })
       );
 
+      image.image = filename;
       // kv.lpush(account, { ...image, image: filename });
     } catch (e) {
       console.error(e);

@@ -44,6 +44,7 @@ export async function scrape(account: string) {
         } as InstagramImage)
     );
 
+  let finalImageList = [];
   for (let image of images) {
     try {
       const filename = `${account}/${image.slug}.jpeg`;
@@ -60,7 +61,7 @@ export async function scrape(account: string) {
         })
       );
 
-      image.image = filename;
+      finalImageList.push({ ...image, image: filename });
       // kv.lpush(account, { ...image, image: filename });
     } catch (e) {
       console.error(e);
@@ -68,5 +69,5 @@ export async function scrape(account: string) {
   }
   // kv.expire(account, FIVE_MINUTES);
 
-  return images;
+  return finalImageList;
 }

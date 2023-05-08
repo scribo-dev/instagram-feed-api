@@ -1,8 +1,22 @@
 import Image from "next/image";
-import Link from "next/link";
-import { GenerateFeed } from "./_actions";
+import { scrape } from "../api/[account]/scrape";
 
-export default function Home() {
+export const runtime = "edge";
+
+async function getData(account: string) {
+  let res = await scrape(account);
+
+  return res;
+}
+
+export default async function Page({
+  params,
+}: {
+  params: { account: string };
+}) {
+  let images = await getData(params.account);
+  console.log(images);
+
   return (
     <div className="min-h-screen overflow-x-hidden bg-gray-50 ">
       <div className="relative h-full ">
@@ -79,8 +93,7 @@ export default function Home() {
           <div className="mx-auto mt-16 max-w-3xl px-4 sm:mt-24 sm:px-6">
             <div className="text-center">
               <h1 className="text-4xl font-extrabold tracking-tight text-gray-900  sm:text-5xl md:text-6xl">
-                <span className="block">Instagram</span>
-                <span className="block text-blue-600">Feed API</span>
+                <span className="block text-blue-600">{params.account}</span>
               </h1>
               <p className="mx-auto mt-3 max-w-md text-base text-gray-500 sm:text-lg md:mt-5 md:max-w-3xl md:text-xl">
                 Nail your topic-based questions with Git Readme! Here you can
@@ -88,26 +101,17 @@ export default function Home() {
                 content.
               </p>
               <div className="mt-12 flex flex-col gap-8 rounded-lg bg-gray-100 p-8 shadow">
-                <form action={GenerateFeed}>
-                  <button type="submit">Add to Cart</button>
-                </form>
-                {/* <form className="flex gap-4" onSubmit={handleSubmit(onSubmit)}>
-                  <Input
-                    type="text"
-                    {...register("url")}
-                    placeholder="https://github.com/scribo-dev/public-docs"
-                  />
-                  <Button type="submit">
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Saving
-                      </>
-                    ) : (
-                      "Start"
-                    )}
-                  </Button>
-                </form> */}
+                {images?.map((i) => (
+                  <div key={i.slug}>
+                    {i.slug}
+                    <img
+                      src={i.image}
+                      alt={i.description}
+                      width={400}
+                      height={400}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
             {/* <Footer /> */}

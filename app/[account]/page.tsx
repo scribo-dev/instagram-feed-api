@@ -1,8 +1,6 @@
 import Image from "next/image";
 import { scrape } from "../api/[account]/scrape";
 
-export const runtime = "edge";
-
 async function getData(account: string) {
   let res = await scrape(account);
 
@@ -15,7 +13,6 @@ export default async function Page({
   params: { account: string };
 }) {
   let images = await getData(params.account);
-  console.log(images);
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-gray-50 ">
@@ -105,7 +102,7 @@ export default async function Page({
                   <div key={i.slug}>
                     {i.slug}
                     <img
-                      src={i.image}
+                      src={`https://d2b8b46ja6xujp.cloudfront.net/${i.image}`}
                       alt={i.description}
                       width={400}
                       height={400}

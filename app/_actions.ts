@@ -2,8 +2,9 @@
 
 import { redirect } from "next/navigation";
 
-export async function GenerateFeed() {
-  console.log("test from server");
+export async function GenerateFeed(data: FormData) {
+  let account = data.get("account") as string;
+  if (!account) throw new Error("Account not provided");
 
-  redirect("/teste");
+  redirect(`/${account.replace("@", "").trim()}`);
 }

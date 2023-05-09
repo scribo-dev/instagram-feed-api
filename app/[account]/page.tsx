@@ -1,7 +1,6 @@
 import Image from "next/image";
 import type { Metadata } from "next";
 import { scrape } from "../api/[account]/scrape";
-import Footer from "../Footer";
 import APITabs from "./APITabs";
 
 export const runtime = "edge";

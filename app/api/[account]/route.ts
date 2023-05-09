@@ -1,5 +1,6 @@
-import { scrape } from "./scrape";
 import { NextResponse } from "next/server";
+import { scrape } from "./scrape";
+import cors from "../../cors";
 
 export const runtime = "edge";
 
@@ -15,12 +16,20 @@ export async function GET(
 ) {
   let images = await scrape(params.account);
 
-  return new Response(JSON.stringify(images), {
-    status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
-  });
+  return cors(
+    request,
+    new Response(JSON.stringify(images), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    })
+  );
+}
+
+export async function OPTIONS(request: Request) {
+  return cors(
+    request,
+    new Response(null, {
+      status: 200,
+    })
+  );
 }

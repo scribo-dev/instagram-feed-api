@@ -29,7 +29,7 @@ export default async function Page({ params }: PageProps) {
   let images = await getData(params.account);
 
   return (
-    <div className="bg-gray-50 ">
+    <div className="">
       <div className="relative h-full ">
         <div className="relative pt-6 pb-16 ">
           <div className="mx-auto mt-16 max-w-[1000px] p-2 ">
@@ -56,7 +56,6 @@ export default async function Page({ params }: PageProps) {
                 ))}
               </div>
             </div>
-            <Footer />
           </div>
         </div>
       </div>

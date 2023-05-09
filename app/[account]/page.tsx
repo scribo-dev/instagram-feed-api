@@ -45,7 +45,7 @@ export default async function Page({ params }: PageProps) {
                     className="w-[309px] h-[309px] overflow-hidden"
                   >
                     <Image
-                      src={`https://d2b8b46ja6xujp.cloudfront.net/${i.image}`}
+                      src={i.image}
                       alt={i.description}
                       width={400}
                       height={400}

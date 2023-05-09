@@ -33,7 +33,7 @@ async function uploadFile(
   finalImageList: InstagramImage[]
 ) {
   try {
-    const filename = `${account}/${image.slug}.jpeg`;
+    let filename = `${account}/${image.slug}.jpeg`;
 
     let imageRequest = await fetch(image.image);
 
@@ -46,6 +46,8 @@ async function uploadFile(
         Body: Buffer.from(buffer),
       })
     );
+
+    filename = `${process.env.CDN_URL}/${filename}`;
 
     finalImageList.push({ ...image, image: filename });
     kv.lpush(account, { ...image, image: filename });

@@ -85,12 +85,14 @@ export async function scrape(account: string) {
     return cachedResults;
   }
 
+  await kv.del(account);
+
   let finalImageList: InstagramImage[] = [];
   await Promise.allSettled(
     images.map((i) => uploadFile(account, i, finalImageList))
   );
 
-  // kv.expire(account, FIVE_MINUTES);
+  // kv.expire(account, 1);
 
   return sortInstagramImages(finalImageList);
 }

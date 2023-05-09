@@ -1233,6 +1233,11 @@
   dependencies:
     isomorphic-fetch "^3.0.0"
 
+"@vercel/analytics@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@vercel/analytics/-/analytics-1.0.1.tgz#38308a626c91866cb00a249c08bf65251e9b9d81"
+  integrity sha512-Ux0c9qUfkcPqng3vrR0GTrlQdqNJ2JREn/2ydrVuKwM3RtMfF2mWX31Ijqo1opSjNAq6rK76PwtANw6kl6TAow==
+
 "@vercel/kv@^0.1.2":
   version "0.1.2"
   resolved "https://registry.yarnpkg.com/@vercel/kv/-/kv-0.1.2.tgz#ef98b1ccf44f3c90943fc20dc79f39988e8790dc"

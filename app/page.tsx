@@ -2,6 +2,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { GenerateFeed } from "./_actions";
 import Footer from "./Footer";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Instagram Feed API",
+  description: "Generate an API for your Instagram Feed in seconds",
+};
 
 export default function Home() {
   return (

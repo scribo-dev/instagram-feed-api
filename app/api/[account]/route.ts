@@ -29,7 +29,7 @@ export async function OPTIONS(request: Request) {
   return cors(
     request,
     new Response(null, {
-      status: 200,
+      status: 204,
     })
   );
 }

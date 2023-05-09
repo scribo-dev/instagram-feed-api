@@ -44,6 +44,7 @@ async function uploadFile(
         Bucket: "instagram-feed-api",
         Key: filename,
         Body: Buffer.from(buffer),
+        CacheControl: "max-age=31536000",
       })
     );
 

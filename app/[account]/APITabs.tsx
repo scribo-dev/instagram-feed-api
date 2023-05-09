@@ -31,15 +31,13 @@ const APITabs = ({ account }: { account: string }) => (
       className="grow p-5  rounded-b-md outline-none text-sm text-gray-700 leading-3"
       value="tab1"
     >
-      https://{process.env.NEXT_PUBLIC_VERCEL_URL ?? "localhost:3000"}
-      /api/{account}
+      https://instagram-api.scribo.dev/api/{account}
     </Tabs.Content>
     <Tabs.Content
       className="grow p-5  rounded-b-md outline-none text-sm text-gray-700 leading-3"
       value="tab2"
     >
-      curl -i https://{process.env.NEXT_PUBLIC_VERCEL_URL ?? "localhost:3000"}
-      /api/{account}
+      curl -i https://instagram-api.scribo.dev/api/{account}
     </Tabs.Content>
   </Tabs.Root>
 );

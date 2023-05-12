@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import va from "@vercel/analytics";
+
 import { scrape } from "./scrape";
 import cors from "../../cors";
 
@@ -14,6 +16,7 @@ export async function GET(
     params: { account: string };
   }
 ) {
+  va.track("api-request", { account: params.account });
   let images = await scrape(params.account);
 
   return cors(

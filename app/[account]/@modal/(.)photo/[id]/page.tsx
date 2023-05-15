@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import InstagramDialog from "./InstagramDialog";
 import { scrape } from "@/app/api/[account]/scrape";
 
@@ -10,5 +11,9 @@ export default async function PhotoPage({
 
   let selectedImage = images.find((i) => i.slug === params.id);
 
-  return <InstagramDialog selectedImage={selectedImage} />;
+  return (
+    <Suspense fallback={"Loading..."}>
+      <InstagramDialog selectedImage={selectedImage} />
+    </Suspense>
+  );
 }

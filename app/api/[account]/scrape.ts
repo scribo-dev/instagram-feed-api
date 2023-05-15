@@ -2,6 +2,7 @@
 
 import kv from "@vercel/kv";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
+import { InstagramImage } from "@/lib/utils";
 
 const s3Client = new S3Client({
   credentials: {
@@ -10,14 +11,6 @@ const s3Client = new S3Client({
   },
   region: "us-east-1",
 });
-
-type InstagramImage = {
-  slug: string;
-  image: string;
-  description: string;
-  takenAt: string;
-  pinned: boolean;
-};
 
 function sortInstagramImages(images: InstagramImage[]) {
   return images.sort((a, b) => {

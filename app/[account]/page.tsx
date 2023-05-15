@@ -2,6 +2,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { scrape } from "../api/[account]/scrape";
 import APITabs from "./APITabs";
+import Link from "next/link";
 
 export const runtime = "edge";
 
@@ -40,8 +41,9 @@ export default async function Page({ params }: PageProps) {
 
               <div className="grid md:grid-cols-3 justify-center mt-12 flex-col gap-8 rounded-lg">
                 {images?.map((i) => (
-                  <div
+                  <Link
                     key={i.slug}
+                    href={`/${params.account}/photo/${i.slug}`}
                     className="w-[309px] h-[309px] overflow-hidden"
                   >
                     <Image
@@ -51,7 +53,7 @@ export default async function Page({ params }: PageProps) {
                       height={400}
                       className="w-full h-full object-cover"
                     />
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

@@ -1,8 +1,6 @@
 import InstagramDialog from "./InstagramDialog";
 import { scrape } from "@/app/api/[account]/scrape";
 
-export const runtime = "edge";
-
 export default async function PhotoPage({
   params,
 }: {

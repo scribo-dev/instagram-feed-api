@@ -57,7 +57,7 @@ export async function scrape(account: string) {
 
   let responseRequest = await fetch(
     `https://api.scrape.do/?token=${process.env.SCRAPE_API}&url=https://www.instagram.com/${account}/?__a=1%26__d=dis`,
-    { next: { revalidate: 60 * 5 } }
+    { next: { revalidate: 60 * 60 } }
   );
 
   let response = await responseRequest.json();

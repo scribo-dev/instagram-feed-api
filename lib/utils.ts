@@ -6,8 +6,10 @@ export function cn(...inputs: ClassValue[]) {
 }
 export type InstagramImage = {
   slug: string;
+  type: "video" | "image";
   image: string;
   description: string;
   takenAt: string;
   pinned: boolean;
+  video?: string;
 };

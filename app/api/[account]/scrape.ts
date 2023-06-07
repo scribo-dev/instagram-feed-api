@@ -42,9 +42,27 @@ async function uploadFile(
     );
 
     filename = `${process.env.CDN_URL}/${filename}`;
+    let video = undefined;
+    if (image.video) {
+      let videoFilename = `${account}/${image.slug}.mp4`;
 
-    finalImageList.push({ ...image, image: filename });
-    kv.lpush(account, { ...image, image: filename });
+      let videoRequest = await fetch(image.video);
+
+      let videoBuffer = await videoRequest.arrayBuffer();
+      await s3Client.send(
+        new PutObjectCommand({
+          Bucket: "instagram-feed-api",
+          Key: videoFilename,
+          Body: Buffer.from(videoBuffer),
+          CacheControl: "max-age=31536000",
+        })
+      );
+
+      video = `${process.env.CDN_URL}/${videoFilename}`;
+    }
+
+    finalImageList.push({ ...image, image: filename, video });
+    kv.lpush(account, { ...image, image: filename, video });
   } catch (e) {
     console.error(e);
   }
@@ -66,10 +84,12 @@ export async function scrape(account: string) {
       ({ node }: any) =>
         ({
           slug: node.shortcode,
+          type: node.is_video ? "video" : "image",
           image: node.display_url,
           description: node.edge_media_to_caption?.edges[0]?.node?.text,
           takenAt: new Date(node.taken_at_timestamp * 1000).toISOString(),
           pinned: node.pinned_for_users && node.pinned_for_users.length > 0,
+          video: node.is_video ? node.video_url : undefined,
         } as InstagramImage)
     )
   );
@@ -83,11 +103,17 @@ export async function scrape(account: string) {
 
   await kv.del(account);
 
-  let finalImageList: InstagramImage[] = [];
-  await Promise.allSettled(
-    images.map((i) => uploadFile(account, i, finalImageList))
+  let finalImageList: InstagramImage[] = images.filter((i) =>
+    cachedResults.find((c) => c.slug === i.slug)
   );
-
+  console.log(`Uploading ${account}...`);
+  let newMedia = images.filter(
+    (i) => !cachedResults.find((c) => c.slug === i.slug)
+  );
+  await Promise.allSettled(
+    newMedia.map((i) => uploadFile(account, i, finalImageList))
+  );
+  console.log(`Ended uploading ${account}`);
   // kv.expire(account, 1);
 
   return sortInstagramImages(finalImageList);

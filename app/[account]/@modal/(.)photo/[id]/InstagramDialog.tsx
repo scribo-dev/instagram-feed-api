@@ -20,7 +20,6 @@ export default function InstagramDialog({
   const router = useRouter();
 
   if (!selectedImage) return null;
-
   return (
     <Dialog
       open={true}
@@ -36,13 +35,17 @@ export default function InstagramDialog({
           </DialogDescription>
         </DialogHeader> */}
         <div className="grid grid-cols-2 gap-4 ">
-          <Image
-            src={selectedImage.image}
-            alt={selectedImage.description}
-            width={400}
-            height={400}
-            className="w-full h-full object-cover"
-          />
+          {selectedImage.video ? (
+            <video src={selectedImage.video} controls={true} autoPlay={true} />
+          ) : (
+            <Image
+              src={selectedImage.image}
+              alt={selectedImage.description}
+              width={400}
+              height={400}
+              className="w-full h-full object-cover"
+            />
+          )}
           <div className="py-12 max-h-[calc(100vh-200px)] overflow-auto pr-4">
             {selectedImage.description}
           </div>

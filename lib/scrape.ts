@@ -3,7 +3,14 @@
 import { getWorkflowClient } from "./temporal";
 import { InstagramImage } from "./utils";
 
-import kv from "@vercel/kv";
+import { Redis } from "@upstash/redis";
+
+if (!process.env.KV_URL || !process.env.KV_TOKEN) throw "env not found";
+
+const kv = new Redis({
+  url: process.env.KV_URL,
+  token: process.env.KV_TOKEN,
+});
 
 function sortInstagramImages(images: InstagramImage[]) {
   return images.sort((a, b) => {

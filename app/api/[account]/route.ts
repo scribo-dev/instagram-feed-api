@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 
-import { scrape } from "./scrape";
 import cors from "../../cors";
+import { scrape } from "@/lib/scrape";
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 // export const revalidate = 60 * 5;
 

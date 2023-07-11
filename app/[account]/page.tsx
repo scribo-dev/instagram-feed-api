@@ -1,10 +1,10 @@
 import Image from "next/image";
 import type { Metadata } from "next";
-import { scrape } from "../api/[account]/scrape";
+import { scrape } from "../../lib/scrape";
 import APITabs from "./APITabs";
 import Link from "next/link";
 
-export const runtime = "edge";
+// export const runtime = "edge";
 
 type PageProps = {
   params: { account: string };

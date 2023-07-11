@@ -1,4 +1,4 @@
-import { scrape } from "@/app/api/[account]/scrape";
+import { scrape } from "@/lib/scrape";
 import InstagramDialog from "../../@modal/(.)photo/[id]/InstagramDialog";
 import Image from "next/image";
 

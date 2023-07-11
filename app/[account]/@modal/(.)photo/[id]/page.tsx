@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import InstagramDialog from "./InstagramDialog";
-import { scrape } from "@/app/api/[account]/scrape";
+import { scrape } from "@/lib/scrape";
 
 export default async function PhotoPage({
   params,

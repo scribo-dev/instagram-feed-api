@@ -1,0 +1,64 @@
+"use server";
+
+import { getWorkflowClient } from "./temporal";
+import { InstagramImage } from "./utils";
+
+import kv from "@vercel/kv";
+
+function sortInstagramImages(images: InstagramImage[]) {
+  return images.sort((a, b) => {
+    if (a.takenAt > b.takenAt) return -1;
+    if (a.takenAt < b.takenAt) return 1;
+    return 0;
+  });
+}
+
+export async function scrape(account: string) {
+  // const res = fetch(`http://localhost:3000/api/${account}`);
+  // return (await res).json();
+  let cachedResults: InstagramImage[] = sortInstagramImages(
+    await kv.lrange(account, 0, 12)
+  );
+
+  let responseRequest = await fetch(
+    `https://api.scrape.do/?token=${process.env.SCRAPE_API}&url=https://www.instagram.com/${account}/?__a=1%26__d=dis`,
+    { next: { revalidate: 60 * 60 } }
+  );
+
+  let response = await responseRequest.json();
+
+  let images: InstagramImage[] = sortInstagramImages(
+    response.graphql.user.edge_owner_to_timeline_media.edges.map(
+      ({ node }: any) =>
+        ({
+          slug: node.shortcode,
+          type: node.is_video ? "video" : "image",
+          image: node.display_url,
+          description: node.edge_media_to_caption?.edges[0]?.node?.text,
+          takenAt: new Date(node.taken_at_timestamp * 1000).toISOString(),
+          pinned: node.pinned_for_users && node.pinned_for_users.length > 0,
+          video: node.is_video ? node.video_url : undefined,
+        } as InstagramImage)
+    )
+  );
+
+  let firstImage = images?.at(0);
+  let firstStoredImage = cachedResults?.at(0);
+  if (firstImage?.takenAt === firstStoredImage?.takenAt) {
+    console.log(`${account} using cache`);
+    return cachedResults;
+  }
+
+  try {
+    const client = await getWorkflowClient();
+    const result = await client.start("InstagramInterpreter", {
+      args: [account],
+      taskQueue: "instagram-interpreter",
+      workflowId: `instagram-${account}`,
+    });
+  } catch (e) {
+    console.error(e);
+  }
+
+  return cachedResults;
+}

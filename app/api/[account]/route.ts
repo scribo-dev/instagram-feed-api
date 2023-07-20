@@ -33,6 +33,8 @@ const clients = [
   "907eb8cece1b1c7a3f2ab59533041de9", // Black Swan
 ];
 
+export const revalidate = 60 * 5;
+
 export async function GET(
   request: NextRequest,
   {

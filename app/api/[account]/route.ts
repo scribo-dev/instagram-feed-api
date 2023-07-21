@@ -29,7 +29,7 @@ const ratelimit = {
 };
 
 const clients = [
-  "935d304b135df1cbb5c5ee1fe191bfb1", //Scribo
+  "935d304b135df1cbb5c5ee1fe191bfb1", // Scribo
   "907eb8cece1b1c7a3f2ab59533041de9", // Black Swan
 ];
 

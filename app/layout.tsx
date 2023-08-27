@@ -2,6 +2,7 @@ import "./globals.css";
 import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import Footer from "./Footer";
+import Signin from "./Signin";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -46,12 +47,7 @@ export default function RootLayout({
               ))}
             </div>
             <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-              {/* <a
-                href="#"
-                className="text-sm font-semibold leading-6 text-gray-900"
-              >
-                Log in <span aria-hidden="true">&rarr;</span>
-              </a> */}
+              <Signin />
             </div>
           </nav>
         </header>

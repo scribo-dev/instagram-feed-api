@@ -1,13 +1,8 @@
 "use client";
-import {
-  useParams,
-  usePathname,
-  useRouter,
-  useSearchParams,
-} from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
-export default async function Page() {
+export default function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
 

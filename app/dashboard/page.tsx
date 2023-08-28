@@ -64,10 +64,7 @@ export default async function Page({
         accounts: {
           connectOrCreate: {
             where: {
-              username_apiTokenId: {
-                apiTokenId: selectedToken?.id,
-                username: account,
-              },
+              username: account,
             },
             create: {
               username: account,

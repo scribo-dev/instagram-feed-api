@@ -45,7 +45,6 @@ export default async function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const data = await getData(searchParams);
-  const token = searchParams["apiToken"] as string;
 
   const alreadyConnected = await prisma.instagramAccount.findMany({
     select: {
@@ -66,13 +65,12 @@ export default async function Page({
     const authToken = formData.get("token") as string;
     await prisma.instagramAccount.upsert({
       where: {
-        username_apiTokenId: { apiTokenId: token, username: instagramUsername },
+        username: instagramUsername,
       },
       create: {
         id: id,
         username: instagramUsername,
         accessToken: authToken,
-        apiTokenId: token,
       },
       update: { id: id, accessToken: authToken, updatedAt: new Date() },
     });
@@ -87,43 +85,39 @@ export default async function Page({
         <h2 className="text-2xl font-bold leading-10 tracking-tight text-gray-900">
           Accounts
         </h2>
-        {token ? (
-          <div className="pt-4">
-            {data?.data?.map((account) => (
-              <form key={account.id} action={connect}>
-                <div className="flex">
-                  <span className="flex-1">
-                    {account.instagram_business_account.name}
-                  </span>
-                  <input
-                    name="id"
-                    defaultValue={account.instagram_business_account.id}
-                    hidden
-                  />
-                  <input
-                    name="username"
-                    defaultValue={account.instagram_business_account.username}
-                    hidden
-                  />
-                  <input
-                    name="token"
-                    defaultValue={account.access_token}
-                    hidden
-                  />
-                  {alreadyConnected.find(
-                    (a) => a.id === account.instagram_business_account.id
-                  ) ? (
-                    "connected with success"
-                  ) : (
-                    <button type="submit">connect</button>
-                  )}
-                </div>
-              </form>
-            ))}
-          </div>
-        ) : (
-          <div>token not found</div>
-        )}
+        <div className="pt-4">
+          {data?.data?.map((account) => (
+            <form key={account.id} action={connect}>
+              <div className="flex">
+                <span className="flex-1">
+                  {account.instagram_business_account.name}
+                </span>
+                <input
+                  name="id"
+                  defaultValue={account.instagram_business_account.id}
+                  hidden
+                />
+                <input
+                  name="username"
+                  defaultValue={account.instagram_business_account.username}
+                  hidden
+                />
+                <input
+                  name="token"
+                  defaultValue={account.access_token}
+                  hidden
+                />
+                {alreadyConnected.find(
+                  (a) => a.id === account.instagram_business_account.id
+                ) ? (
+                  "connected with success"
+                ) : (
+                  <button type="submit">connect</button>
+                )}
+              </div>
+            </form>
+          ))}
+        </div>
       </div>
     </div>
   );

@@ -61,14 +61,15 @@ model VerificationToken {
 }
 
 model InstagramAccount {
-  username    String
+  username    String     @id
   id          String?
-  accessToken String?  @db.Text()
+  accessToken String?    @db.Text()
   // instagramAccessTokenExpiry DateTime
-  apiToken    ApiToken @relation(fields: [apiTokenId], references: [id])
-  apiTokenId  String
-  updatedAt   DateTime @updatedAt
-  createdAt   DateTime @default(now())
+  // apiToken    ApiToken @relation(fields: [apiTokenId], references: [id])
+  // apiTokenId  String
+  apiTokens   ApiToken[]
+  updatedAt   DateTime   @updatedAt
+  createdAt   DateTime   @default(now())
   // Relations
   // Publications Publication[]
   // Shop         Shop[]
@@ -76,8 +77,8 @@ model InstagramAccount {
   // ApiToken             ApiToken? @relation(fields: [apiTokenId], references: [id])
   // apiTokenId           String?
 
-  @@unique([username, apiTokenId])
-  @@index([apiTokenId])
+  // @@unique([username, apiTokenId])
+  // @@index([apiTokenId])
 }
 
 model ApiToken {

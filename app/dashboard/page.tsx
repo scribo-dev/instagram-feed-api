@@ -2,6 +2,11 @@ import { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { redirect } from "next/navigation";
+import { revalidate } from "../api/[account]/route";
+import { revalidatePath } from "next/cache";
+import { v4 as uuidv4 } from "uuid";
+
+import FacebookLogin from "./FacebookLogin";
 
 // export const runtime = "edge";
 
@@ -18,11 +23,60 @@ export default async function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const session = await getServerSession(authOptions);
-
   if (!session) redirect("/");
+
+  const tokens = await prisma?.apiToken.findMany({
+    where: { userId: session?.user?.id },
+    include: {
+      accounts: true,
+    },
+  });
+  const selectedToken = tokens && tokens[0];
 
   async function create(formData: FormData) {
     "use server";
+
+    if (!session?.user) throw new Error("Unauthorized");
+
+    await prisma?.apiToken.create({
+      data: {
+        id: formData.get("value") as string,
+        description: formData.get("description") as string,
+        userId: session.user.id,
+      },
+    });
+
+    revalidatePath("/dashboard");
+  }
+
+  async function addAccount(formData: FormData) {
+    "use server";
+    if (!session?.user) throw new Error("Unauthorized");
+
+    if (!selectedToken) throw new Error("No token found");
+
+    let account = formData.get("account") as string;
+    await prisma?.apiToken.update({
+      where: { id: selectedToken?.id },
+      data: {
+        userId: session.user.id,
+        accounts: {
+          connectOrCreate: {
+            where: {
+              username_apiTokenId: {
+                apiTokenId: selectedToken?.id,
+                username: account,
+              },
+            },
+            create: {
+              username: account,
+            },
+          },
+        },
+      },
+    });
+
+    revalidatePath("/dashboard");
   }
 
   return (
@@ -34,15 +88,32 @@ export default async function Page({
 
         <div className="pt-4">
           Hello {session?.user?.name}
-          <form action={create}>
-            <input name="account" />
-            <button type="submit">add</button>
-          </form>
-          <a
-            href={`https://www.facebook.com/v17.0/dialog/oauth?client_id=262115046660775&display=page&extras={"setup":{"channel":"IG_API_ONBOARDING"}}&redirect_uri=http://localhost:3000/auth-integration&response_type=token&scope=instagram_basic,instagram_content_publish,instagram_manage_comments,instagram_manage_insights,pages_show_list,pages_read_engagement`}
-          >
-            Login to Facebook
-          </a>
+          {!selectedToken ? (
+            <form action={create}>
+              <input name="value" defaultValue={uuidv4()} hidden />
+              <button type="submit">Get started</button>
+            </form>
+          ) : (
+            <div>
+              <span>{selectedToken.id}</span>
+
+              <form action={addAccount}>
+                <input name="account" />
+                <button type="submit">Add account</button>
+              </form>
+            </div>
+          )}
+          {selectedToken &&
+            selectedToken?.accounts?.map((account) => (
+              <div key={account.id} className="flex gap-2">
+                {account.username}
+                {account.accessToken ? (
+                  "connected"
+                ) : (
+                  <FacebookLogin token={selectedToken.id} />
+                )}
+              </div>
+            ))}
         </div>
       </div>
     </div>

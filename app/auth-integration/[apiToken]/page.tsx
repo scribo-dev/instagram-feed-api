@@ -1,18 +1,25 @@
 "use client";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import {
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { useEffect } from "react";
 
 export default async function Page() {
   const router = useRouter();
+  const urlParams = useParams();
   const searchParams = useSearchParams();
 
   useEffect(() => {
     if (!window.location.hash) return;
 
     const params = new URLSearchParams(window.location.hash);
-
     router.push(
-      `/account-selector?long_lived_token=${params.get("long_lived_token")}`
+      `/account-selector?long_lived_token=${params.get(
+        "long_lived_token"
+      )}&apiToken=${urlParams["apiToken"]}`
     );
   }, [searchParams]);
 

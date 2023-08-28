@@ -1,7 +1,7 @@
 "use client";
 
 export default function FacebookLogin({ token }: { token: string }) {
-  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const origin = process.env.APP_URL;
   return (
     <div>
       <a

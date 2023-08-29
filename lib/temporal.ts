@@ -14,8 +14,8 @@ export async function getConnection() {
   let connectionParams: ConnectionOptions = {
     address: process.env.TEMPORAL_URL,
   };
-  // if (process.env.NODE_ENV === "production")
-  connectionParams = { ...connectionParams, tls: {} };
+  if (process.env.NODE_ENV === "production")
+    connectionParams = { ...connectionParams, tls: {} };
 
   console.log(connectionParams);
 

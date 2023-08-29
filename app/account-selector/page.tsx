@@ -53,7 +53,9 @@ export default async function Page({
     },
     where: {
       username: {
-        in: data.data.map((a) => a.instagram_business_account.username),
+        in: data?.data
+          ?.filter((a) => a.instagram_business_account)
+          .map((a) => a.instagram_business_account.username),
       },
     },
   });
@@ -86,37 +88,39 @@ export default async function Page({
           Accounts
         </h2>
         <div className="pt-4">
-          {data?.data?.map((account) => (
-            <form key={account.id} action={connect}>
-              <div className="flex">
-                <span className="flex-1">
-                  {account.instagram_business_account.name}
-                </span>
-                <input
-                  name="id"
-                  defaultValue={account.instagram_business_account.id}
-                  hidden
-                />
-                <input
-                  name="username"
-                  defaultValue={account.instagram_business_account.username}
-                  hidden
-                />
-                <input
-                  name="token"
-                  defaultValue={account.access_token}
-                  hidden
-                />
-                {alreadyConnected.find(
-                  (a) => a.id === account.instagram_business_account.id
-                ) ? (
-                  "connected with success"
-                ) : (
-                  <button type="submit">connect</button>
-                )}
-              </div>
-            </form>
-          ))}
+          {data?.data
+            ?.filter((a) => a.instagram_business_account)
+            .map((account) => (
+              <form key={account.id} action={connect}>
+                <div className="flex">
+                  <span className="flex-1">
+                    {account.instagram_business_account.username}
+                  </span>
+                  <input
+                    name="id"
+                    defaultValue={account.instagram_business_account.id}
+                    hidden
+                  />
+                  <input
+                    name="username"
+                    defaultValue={account.instagram_business_account.username}
+                    hidden
+                  />
+                  <input
+                    name="token"
+                    defaultValue={account.access_token}
+                    hidden
+                  />
+                  {alreadyConnected.find(
+                    (a) => a.id === account.instagram_business_account.id
+                  ) ? (
+                    "connected with success"
+                  ) : (
+                    <button type="submit">connect</button>
+                  )}
+                </div>
+              </form>
+            ))}
         </div>
       </div>
     </div>

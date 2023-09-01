@@ -33,6 +33,33 @@ const ratelimit = {
 
 export const revalidate = 60 * 5;
 
+async function checkPermission(
+  request: NextRequest,
+  account: string,
+  checkAccount: boolean = true
+) {
+  const auth = request.headers.get("Authorization")?.replace("Bearer ", "");
+  let storedToken = await prisma.apiToken.findUnique({
+    where: { id: auth },
+    include: { accounts: true },
+  });
+
+  if (!storedToken)
+    return {
+      error: "Token not found",
+    };
+
+  const instagramAccount = storedToken.accounts.find(
+    (a) => a.username === account
+  );
+  if (checkAccount && !instagramAccount)
+    return {
+      error: "Invalid account",
+    };
+
+  return { account: instagramAccount, token: storedToken };
+}
+
 export async function GET(
   request: NextRequest,
   {
@@ -41,41 +68,15 @@ export async function GET(
     params: { account: string; type?: string };
   }
 ) {
-  const auth = request.headers.get("Authorization")?.replace("Bearer ", "");
-  let storedToken = await prisma.apiToken.findUnique({
-    where: { id: auth },
-    include: { accounts: true },
-  });
-
-  if (!storedToken) return cors(request, new Response("", { status: 401 }));
-
-  const instagramAccount = storedToken.accounts.find(
-    (a) => a.username === params.account
-  );
-  if (!instagramAccount)
-    return cors(request, new Response("Invalid account", { status: 401 }));
-
-  let id = request.ip ?? "anonymous";
-  let rate = ratelimit.free;
-
-  if (auth) {
-    rate = ratelimit.paid;
-    id = auth;
-  }
-
-  const { success, remaining, limit, reset } = await rate.limit(
-    id ?? "anonymous"
+  const url = new URL(request.url);
+  const sizes = url.searchParams.get("sizes");
+  const quality = url.searchParams.get("quality");
+  const { account: instagramAccount, error } = await checkPermission(
+    request,
+    params.account
   );
 
-  let headers = {
-    "Content-Type": "application/json",
-    "X-RateLimit-Limit": limit.toString(),
-    "X-RateLimit-Remaining": remaining.toString(),
-    "X-RateLimit-Reset": reset.toString(),
-  };
-
-  if (!success)
-    return cors(request, new Response("", { status: 429, headers }));
+  if (error) return cors(request, new Response(error, { status: 401 }));
 
   const account = params.account;
   const requestingStories =
@@ -87,7 +88,7 @@ export async function GET(
   try {
     const client = await getWorkflowClient();
     await client.start("InstagramInterpreter", {
-      args: [account],
+      args: [account, sizes, quality],
       taskQueue: "instagram-interpreter",
       workflowId: `instagram-${account}`,
     });
@@ -99,8 +100,48 @@ export async function GET(
     request,
     new Response(JSON.stringify(images), {
       status: 200,
-      headers,
+      // headers,
     })
+  );
+}
+
+export async function POST(
+  request: NextRequest,
+  {
+    params,
+  }: {
+    params: { account: string; type?: string };
+  }
+) {
+  const {
+    account: instagramAccount,
+    token,
+    error,
+  } = await checkPermission(request, params.account, false);
+
+  if (error || !token)
+    return cors(request, new Response(error, { status: 401 }));
+
+  await prisma.apiToken.update({
+    where: { id: token.id },
+    data: {
+      accounts: {
+        connectOrCreate: {
+          where: { username: params.account },
+          create: { username: params.account },
+        },
+      },
+    },
+  });
+
+  return cors(
+    request,
+    new Response(
+      JSON.stringify({
+        loginUrl: `https://www.facebook.com/v17.0/dialog/oauth?client_id=${process.env.FB_CLIENT_ID}&display=page&extras={"setup":{"channel":"IG_API_ONBOARDING"}}&redirect_uri=${process.env.APP_URL}/auth-integration&response_type=token&scope=instagram_basic,instagram_content_publish,instagram_manage_comments,instagram_manage_insights,pages_show_list,pages_read_engagement`,
+      }),
+      { status: 200 }
+    )
   );
 }
 

@@ -145,6 +145,30 @@ export async function POST(
   );
 }
 
+export async function DELETE(
+  request: NextRequest,
+  {
+    params,
+  }: {
+    params: { account: string; type?: string };
+  }
+) {
+  const {
+    account: instagramAccount,
+    token,
+    error,
+  } = await checkPermission(request, params.account, false);
+
+  if (error || !token || !instagramAccount)
+    return cors(request, new Response(error, { status: 401 }));
+
+  const username = instagramAccount.username;
+
+  await kv.del(username);
+  await kv.del(`${username}-stories`);
+  return cors(request, new Response(null, { status: 200 }));
+}
+
 export async function OPTIONS(request: Request) {
   return cors(
     request,

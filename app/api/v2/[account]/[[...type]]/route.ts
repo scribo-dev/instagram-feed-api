@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 import cors from "../../../../cors";
 
@@ -76,39 +76,41 @@ export async function GET(
     params.account
   );
 
-  if (error) return new Response(error, { status: 401 });
+  if (error) return cors(request, new Response(error, { status: 401 }));
 
   const account = params.account;
-  const requestingStories =
-    params.type?.length !== 0 && params.type?.at(0) === "stories";
 
-  // const key = requestingStories ? `${account}-stories` : account;
-  // let images: InstagramImage[] =
-  // await kv.lrange(key, 0, 12);
   let images = await prisma.media.findMany({
     where: { username: account },
     orderBy: { timestamp: "desc" },
   });
 
-  try {
-    const client = await getWorkflowClient();
-    await client.start("InstagramInterpreter", {
-      args: [account, sizes, quality],
-      taskQueue: "instagram-interpreter",
-      workflowId: `instagram-${account}`,
-    });
-  } catch (e) {
-    console.error(e);
+  const cacheKey = `${account}-temporal-ttl`;
+  const keyTTL = await kv.ttl(cacheKey);
+
+  if (keyTTL <= -1) {
+    try {
+      const client = await getWorkflowClient();
+      await client.start("InstagramInterpreter", {
+        args: [account, sizes, quality],
+        taskQueue: "instagram-interpreter",
+        workflowId: `instagram-${account}`,
+      });
+
+      await kv.set(cacheKey, "cached");
+      await kv.expire(cacheKey, 5 * 60);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
-  return NextResponse.json(images);
-  //  cors(
-  //   request,
-  //   new Response(JSON.stringify(images), {
-  //     status: 200,
-  //     // headers,
-  //   })
-  // );
+  return cors(
+    request,
+    new Response(JSON.stringify(images), {
+      status: 200,
+      // headers,
+    })
+  );
 }
 
 export async function POST(

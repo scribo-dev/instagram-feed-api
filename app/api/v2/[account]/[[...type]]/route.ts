@@ -87,8 +87,9 @@ export async function GET(
 
   const cacheKey = `${account}-temporal-ttl`;
   const keyTTL = await kv.ttl(cacheKey);
+  const forceNoCache = request.headers.get("Cache-Control") === "no-cache";
 
-  if (keyTTL <= -1) {
+  if (keyTTL <= -1 || forceNoCache) {
     try {
       const client = await getWorkflowClient();
       await client.start("InstagramInterpreter", {

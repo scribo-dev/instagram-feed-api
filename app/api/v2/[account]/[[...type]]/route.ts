@@ -5,7 +5,6 @@ import cors from "../../../../cors";
 import { Redis } from "@upstash/redis";
 import { Ratelimit } from "@upstash/ratelimit";
 import { prisma } from "@/lib/db";
-import { InstagramImage } from "@/lib/utils";
 import { getWorkflowClient } from "@/lib/temporal";
 import { kv } from "@/lib/cache";
 
@@ -39,6 +38,11 @@ async function checkPermission(
   checkAccount: boolean = true
 ) {
   const auth = request.headers.get("Authorization")?.replace("Bearer ", "");
+  if (!auth)
+    return {
+      error: "Token not found",
+    };
+
   let storedToken = await prisma.apiToken.findUnique({
     where: { id: auth },
     include: { accounts: true },
@@ -60,6 +64,36 @@ async function checkPermission(
   return { account: instagramAccount, token: storedToken };
 }
 
+/**
+ * @swagger
+ * /api/v2/{account}:
+ *   get:
+ *     description: Returns user's instagram media
+ *     parameters:
+ *      - name: account
+ *        in: path
+ *        description: Instagram account name
+ *        required: true
+ *        schema:
+ *          type: string
+ *     security:
+ *      - BearerAuth:
+ *     responses:
+ *       401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/Error'
+ *       200:
+ *         description: List of all media types
+ *         content:
+ *            application/json:
+ *              schema:
+ *                type: array
+ *                items:
+ *                  $ref: '#/components/schemas/Media'
+ */
 export async function GET(
   request: NextRequest,
   {
@@ -76,7 +110,16 @@ export async function GET(
     params.account
   );
 
-  if (error) return cors(request, new Response(error, { status: 401 }));
+  if (error)
+    return cors(
+      request,
+      new Response(JSON.stringify({ error }), {
+        status: 401,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+    );
 
   const account = params.account;
 
@@ -109,11 +152,41 @@ export async function GET(
     request,
     new Response(JSON.stringify(images), {
       status: 200,
-      // headers,
+      headers: {
+        "Content-Type": "application/json",
+      },
     })
   );
 }
 
+/**
+ * @swagger
+ * /api/v2/{account}:
+ *   post:
+ *     description: Add instagram account
+ *     parameters:
+ *      - name: account
+ *        in: path
+ *        description: Instagram account name
+ *        required: true
+ *        schema:
+ *          type: string
+ *     security:
+ *      - BearerAuth:
+ *     responses:
+ *       401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/Error'
+ *       200:
+ *         description: Login information that you need to send to the client
+ *         content:
+ *            application/json:
+ *              schema:
+ *                $ref: '#/components/schemas/LoginURL'
+ */
 export async function POST(
   request: NextRequest,
   {
@@ -147,9 +220,14 @@ export async function POST(
     request,
     new Response(
       JSON.stringify({
-        loginUrl: `https://www.facebook.com/v17.0/dialog/oauth?client_id=${process.env.FB_CLIENT_ID}&display=page&extras={"setup":{"channel":"IG_API_ONBOARDING"}}&redirect_uri=${process.env.APP_URL}/auth-integration&response_type=token&scope=instagram_basic,instagram_content_publish,instagram_manage_comments,instagram_manage_insights,pages_show_list,pages_read_engagement`,
+        url: `https://www.facebook.com/v17.0/dialog/oauth?client_id=${process.env.FB_CLIENT_ID}&display=page&extras={"setup":{"channel":"IG_API_ONBOARDING"}}&redirect_uri=${process.env.APP_URL}/auth-integration&response_type=token&scope=instagram_basic,instagram_content_publish,instagram_manage_comments,instagram_manage_insights,pages_show_list,pages_read_engagement`,
       }),
-      { status: 200 }
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
     )
   );
 }

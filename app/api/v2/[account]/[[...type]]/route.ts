@@ -31,7 +31,7 @@ const ratelimit = {
   }),
 };
 
-export const revalidate = 60 * 5;
+export const revalidate = 360;
 
 async function checkPermission(
   request: NextRequest,
@@ -82,8 +82,13 @@ export async function GET(
   const requestingStories =
     params.type?.length !== 0 && params.type?.at(0) === "stories";
 
-  const key = requestingStories ? `${account}-stories` : account;
-  let images: InstagramImage[] = await kv.lrange(key, 0, 12);
+  // const key = requestingStories ? `${account}-stories` : account;
+  // let images: InstagramImage[] =
+  // await kv.lrange(key, 0, 12);
+  let images = await prisma.media.findMany({
+    where: { username: account },
+    orderBy: { timestamp: "desc" },
+  });
 
   try {
     const client = await getWorkflowClient();

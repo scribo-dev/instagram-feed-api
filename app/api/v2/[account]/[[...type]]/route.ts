@@ -30,8 +30,6 @@ const ratelimit = {
   }),
 };
 
-export const revalidate = 360;
-
 async function checkPermission(
   request: NextRequest,
   account: string,
@@ -90,9 +88,14 @@ async function checkPermission(
  *         content:
  *            application/json:
  *              schema:
- *                type: array
- *                items:
- *                  $ref: '#/components/schemas/Media'
+ *                type: object
+ *                properties:
+ *                  data:
+ *                    type: array
+ *                    items:
+ *                      $ref: '#/components/schemas/Media'
+ *                  pagination:
+ *                    $ref: '#/components/schemas/Pagination'
  */
 export async function GET(
   request: NextRequest,
@@ -105,6 +108,9 @@ export async function GET(
   const url = new URL(request.url);
   const sizes = url.searchParams.get("sizes");
   const quality = url.searchParams.get("quality");
+  const limit = parseInt(url.searchParams.get("limit") || "10");
+  const page = parseInt(url.searchParams.get("page") || "1");
+
   const { account: instagramAccount, error } = await checkPermission(
     request,
     params.account
@@ -122,11 +128,26 @@ export async function GET(
     );
 
   const account = params.account;
-
-  let images = await prisma.media.findMany({
+  const images = await prisma.media.findMany({
     where: { username: account },
     orderBy: { timestamp: "desc" },
+    skip: (page - 1) * limit,
+    take: limit,
   });
+  const totalCount = await prisma.media.count({ where: { username: account } });
+  const pageCount = Math.ceil(totalCount / limit);
+  const previousPage = page > 1 ? page - 1 : null;
+  const nextPage = page < pageCount ? page + 1 : null;
+  const pagination = {
+    isFirstPage: previousPage === null,
+    isLastPage: nextPage === null,
+    currentPage: page,
+    previousPage,
+    nextPage,
+    pageCount,
+    totalCount,
+    limit,
+  };
 
   const cacheKey = `${account}-temporal-ttl`;
   const keyTTL = await kv.ttl(cacheKey);
@@ -150,7 +171,7 @@ export async function GET(
 
   return cors(
     request,
-    new Response(JSON.stringify(images), {
+    new Response(JSON.stringify({ data: images, pagination }), {
       status: 200,
       headers: {
         "Content-Type": "application/json",

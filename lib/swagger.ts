@@ -68,6 +68,41 @@ export const getApiDocs = async () => {
               },
             },
           },
+          Pagination: {
+            type: "object",
+            properties: {
+              isFirstPage: {
+                type: "boolean",
+              },
+              isLastPage: {
+                type: "boolean",
+              },
+              currentPage: {
+                type: "integer",
+                format: "int64",
+              },
+              previousPage: {
+                type: "integer",
+                format: "int64",
+              },
+              nextPage: {
+                type: "integer",
+                format: "int64",
+              },
+              pageCount: {
+                type: "integer",
+                format: "int64",
+              },
+              totalCount: {
+                type: "integer",
+                format: "int64",
+              },
+              limit: {
+                type: "integer",
+                format: "int64",
+              },
+            },
+          },
           Error: {
             type: "object",
             properties: {

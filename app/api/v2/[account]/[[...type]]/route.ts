@@ -1,4 +1,4 @@
-import { NextRequest } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
 import cors from "../../../../cors";
 
@@ -76,7 +76,7 @@ export async function GET(
     params.account
   );
 
-  if (error) return cors(request, new Response(error, { status: 401 }));
+  if (error) return new Response(error, { status: 401 });
 
   const account = params.account;
   const requestingStories =
@@ -101,13 +101,14 @@ export async function GET(
     console.error(e);
   }
 
-  return cors(
-    request,
-    new Response(JSON.stringify(images), {
-      status: 200,
-      // headers,
-    })
-  );
+  return NextResponse.json(images);
+  //  cors(
+  //   request,
+  //   new Response(JSON.stringify(images), {
+  //     status: 200,
+  //     // headers,
+  //   })
+  // );
 }
 
 export async function POST(

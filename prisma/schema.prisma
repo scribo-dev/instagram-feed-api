@@ -79,6 +79,7 @@ model InstagramAccount {
 
   // @@unique([username, apiTokenId])
   // @@index([apiTokenId])
+  media Media[]
 }
 
 model ApiToken {
@@ -90,4 +91,34 @@ model ApiToken {
   accounts InstagramAccount[]
 
   @@index([userId])
+}
+
+enum MediaProductType {
+  AD
+  FEED
+  STORY
+  REELS
+}
+
+enum MediaType {
+  CAROUSEL_ALBUM
+  IMAGE
+  VIDEO
+}
+
+model Media {
+  id               String           @id
+  caption          String?
+  mediaProductType MediaProductType
+  mediaType        MediaType
+  thumbnailUrl     String?          @db.Text()
+  mediaUrl         String           @db.Text()
+  shortcode        String
+  timestamp        DateTime
+  username         String
+  user             InstagramAccount @relation(fields: [username], references: [username], onDelete: Cascade)
+
+  sizes Json?
+
+  @@index([username])
 }

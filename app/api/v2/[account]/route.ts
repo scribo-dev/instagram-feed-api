@@ -96,6 +96,18 @@ async function checkPermission(
  *            - FEED
  *            - STORY
  *            - REELS
+ *      - name: limit
+ *        in: query
+ *        description: number of media returned
+ *        required: false
+ *        schema:
+ *          type: integer
+ *      - name: page
+ *        in: query
+ *        description: page number
+ *        required: false
+ *        schema:
+ *          type: integer
  *     security:
  *      - BearerAuth:
  *     responses:

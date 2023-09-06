@@ -67,7 +67,10 @@ async function checkPermission(
  * @swagger
  * /api/v2/{account}:
  *   get:
+ *     summary: List instagram account media
  *     description: Returns user's instagram media
+ *     tags:
+ *      - Media
  *     parameters:
  *      - name: account
  *        in: path
@@ -232,7 +235,10 @@ export async function GET(
  * @swagger
  * /api/v2/{account}:
  *   post:
+ *     summary: Add instagram account
  *     description: Add instagram account
+ *     tags:
+ *      - Settings
  *     parameters:
  *      - name: account
  *        in: path
@@ -305,7 +311,10 @@ export async function POST(
  * @swagger
  * /api/v2/{account}:
  *   delete:
+ *     summary: Remove instagram account
  *     description: Remove instagram account
+ *     tags:
+ *      - Settings
  *     parameters:
  *      - name: account
  *        in: path

@@ -1,12 +1,13 @@
 import { NextRequest } from "next/server";
 
-import cors from "../../../../cors";
+import cors from "../../../cors";
 
 import { Redis } from "@upstash/redis";
 import { Ratelimit } from "@upstash/ratelimit";
 import { prisma } from "@/lib/db";
 import { getWorkflowClient } from "@/lib/temporal";
 import { kv } from "@/lib/cache";
+import { Prisma } from "@prisma/client";
 
 if (!process.env.KV_URL || !process.env.KV_TOKEN) throw "env not found";
 
@@ -74,6 +75,27 @@ async function checkPermission(
  *        required: true
  *        schema:
  *          type: string
+ *      - name: media-type
+ *        in: query
+ *        description: filter by media type
+ *        required: false
+ *        schema:
+ *          type: string
+ *          enum:
+ *            - CAROUSEL_ALBUM
+ *            - IMAGE
+ *            - VIDEO
+ *      - name: media-product-type
+ *        in: query
+ *        description: filter by media product type
+ *        required: false
+ *        schema:
+ *          type: string
+ *          enum:
+ *            - AD
+ *            - FEED
+ *            - STORY
+ *            - REELS
  *     security:
  *      - BearerAuth:
  *     responses:
@@ -110,6 +132,15 @@ export async function GET(
   const quality = url.searchParams.get("quality");
   const limit = parseInt(url.searchParams.get("limit") || "10");
   const page = parseInt(url.searchParams.get("page") || "1");
+  const mediaType = url.searchParams.get("media-type")?.toUpperCase() as
+    | "CAROUSEL_ALBUM"
+    | "IMAGE"
+    | "VIDEO"
+    | null;
+
+  const mediaProductType = url.searchParams
+    .get("media-product-type")
+    ?.toUpperCase() as "AD" | "FEED" | "STORY" | "REELS" | null;
 
   const { account: instagramAccount, error } = await checkPermission(
     request,
@@ -128,13 +159,18 @@ export async function GET(
     );
 
   const account = params.account;
+  let query: Prisma.MediaWhereInput = { username: account };
+  if (mediaType) query = { ...query, mediaType };
+
+  if (mediaProductType) query = { ...query, mediaProductType };
+
   const images = await prisma.media.findMany({
-    where: { username: account },
+    where: query,
     orderBy: { timestamp: "desc" },
     skip: (page - 1) * limit,
     take: limit,
   });
-  const totalCount = await prisma.media.count({ where: { username: account } });
+  const totalCount = await prisma.media.count({ where: query });
   const pageCount = Math.ceil(totalCount / limit);
   const previousPage = page > 1 ? page - 1 : null;
   const nextPage = page < pageCount ? page + 1 : null;

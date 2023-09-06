@@ -253,6 +253,31 @@ export async function POST(
   );
 }
 
+/**
+ * @swagger
+ * /api/v2/{account}:
+ *   delete:
+ *     description: Remove instagram account
+ *     parameters:
+ *      - name: account
+ *        in: path
+ *        description: Instagram account name
+ *        required: true
+ *        schema:
+ *          type: string
+ *     security:
+ *      - BearerAuth:
+ *     responses:
+ *       401:
+ *        description: Unauthorized
+ *        content:
+ *          application/json:
+ *            schema:
+ *              $ref: '#/components/schemas/Error'
+ *       200:
+ *         description: Account removed from auth token
+ *
+ */
 export async function DELETE(
   request: NextRequest,
   {
@@ -272,8 +297,17 @@ export async function DELETE(
 
   const username = instagramAccount.username;
 
-  await kv.del(username);
-  await kv.del(`${username}-stories`);
+  await prisma.apiToken.update({
+    where: { id: token.id },
+    data: {
+      accounts: {
+        disconnect: {
+          username,
+        },
+      },
+    },
+  });
+
   return cors(request, new Response(null, { status: 200 }));
 }
 

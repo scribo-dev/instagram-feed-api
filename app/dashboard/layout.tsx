@@ -2,6 +2,14 @@ import "../globals.css";
 import { Button } from "@/components/ui/button";
 import { MainNav } from "./components/main-nav";
 import { UserNav } from "./components/user-nav";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 export const metadata = {
   title: "Next.js",
@@ -27,15 +35,7 @@ export default function RootLayout({
               </div>
             </div>
           </div>
-          <div className="flex-1 space-y-4 p-8 pt-6">
-            <div className="flex items-center justify-between space-y-2">
-              <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
-              <div className="flex items-center space-x-2">
-                {/* <CalendarDateRangePicker /> */}
-                <Button>Download</Button>
-              </div>
-            </div>
-          </div>
+
           {children}
         </div>
       </body>

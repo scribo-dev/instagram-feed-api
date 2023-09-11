@@ -1,6 +1,6 @@
 import Image from "next/image";
 import type { Metadata } from "next";
-import { scrape } from "../../lib/scrape";
+import { scrape } from "../../../lib/scrape";
 import APITabs from "./APITabs";
 import Link from "next/link";
 

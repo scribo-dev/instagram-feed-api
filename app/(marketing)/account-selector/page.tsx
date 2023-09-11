@@ -2,6 +2,8 @@ import { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import { Button } from "@/components/ui/button";
+import { CheckIcon, PlusCircleIcon } from "lucide-react";
 
 // export const runtime = "edge";
 export const dynamic = "force-dynamic";
@@ -83,17 +85,17 @@ export default async function Page({
 
   return (
     <div className="">
-      <div className="mx-auto max-w-7xl divide-y divide-gray-900/10 px-6 py-24 sm:py-32 lg:px-8 lg:py-40">
+      <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-40">
         <h2 className="text-2xl font-bold leading-10 tracking-tight text-gray-900">
           Accounts
         </h2>
-        <div className="pt-4">
+        <div className="pt-4 flex flex-col divide-y">
           {data?.data
             ?.filter((a) => a.instagram_business_account)
             .map((account) => (
-              <form key={account.id} action={connect}>
+              <form key={account.id} action={connect} className="py-4">
                 <div className="flex">
-                  <span className="flex-1">
+                  <span className="flex-1 font-medium">
                     {account.instagram_business_account.username}
                   </span>
                   <input
@@ -114,9 +116,15 @@ export default async function Page({
                   {alreadyConnected.find(
                     (a) => a.id === account.instagram_business_account.id
                   ) ? (
-                    "connected with success"
+                    <Button variant="outline" disabled={true}>
+                      <CheckIcon className="h-4 w-4 mr-2" />
+                      Connected
+                    </Button>
                   ) : (
-                    <button type="submit">connect</button>
+                    <Button type="submit">
+                      <PlusCircleIcon className="h-4 w-4 mr-2" />
+                      connect
+                    </Button>
                   )}
                 </div>
               </form>

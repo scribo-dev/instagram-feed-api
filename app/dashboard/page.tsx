@@ -1,30 +1,23 @@
-import { Metadata } from "next";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../api/auth/[...nextauth]/route";
-import { redirect } from "next/navigation";
-import { revalidate } from "../api/[account]/route";
 import { revalidatePath } from "next/cache";
 import { v4 as uuidv4 } from "uuid";
-import { prisma } from "@/lib/db";
-
 import FacebookLogin from "./FacebookLogin";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { PlusIcon, CheckIcon } from "lucide-react";
 
-// export const runtime = "edge";
-
-export const metadata: Metadata = {
-  title: "FAQ | Instagram Feed API",
-  description: "Common questions about Instagram Feed API",
-};
-
-export default async function Page({
-  params,
-  searchParams,
-}: {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function Page() {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/");
 
   const tokens = await prisma?.apiToken.findMany({
     where: { userId: session?.user?.id },
@@ -56,7 +49,7 @@ export default async function Page({
 
     if (!selectedToken) throw new Error("No token found");
 
-    let account = formData.get("account") as string;
+    let account = (formData.get("account") as string).replace("@", "").trim();
     await prisma?.apiToken.update({
       where: { id: selectedToken?.id },
       data: {
@@ -78,40 +71,59 @@ export default async function Page({
   }
 
   return (
-    <div className="">
-      <div className="mx-auto max-w-7xl divide-y divide-gray-900/10 px-6 py-24 sm:py-32 lg:px-8 lg:py-40">
-        <h2 className="text-2xl font-bold leading-10 tracking-tight text-gray-900">
-          Dashboard
-        </h2>
-
-        <div className="pt-4">
-          Hello {session?.user?.name}
+    <div className="flex-1 space-y-4 p-8 pt-6 container">
+      <div className="flex items-center justify-between space-y-2">
+        <div className="flex gap-2 items-center">
+          <h2 className="text-3xl font-bold tracking-tight">Accounts</h2>
+          <Badge variant="outline">{selectedToken?.id}</Badge>
+        </div>
+        <div className="flex items-center space-x-2">
           {!selectedToken ? (
             <form action={create}>
-              <input name="value" defaultValue={uuidv4()} hidden />
-              <button type="submit">Get started</button>
+              <Input name="value" defaultValue={uuidv4()} hidden />
+              <Button type="submit">Get started</Button>
             </form>
           ) : (
             <div>
-              <span>{selectedToken.id}</span>
-
-              <form action={addAccount}>
-                <input name="account" />
-                <button type="submit">Add account</button>
+              <form action={addAccount} className="flex gap-2">
+                <Input name="account" placeholder="Instagram username" />
+                <Button type="submit">
+                  <PlusIcon className="h-4 w-4 mr-2" />
+                  Add
+                </Button>
               </form>
             </div>
           )}
-          {selectedToken &&
-            selectedToken?.accounts?.map((account) => (
-              <div key={account.id} className="flex gap-2">
-                {account.username}
-                {account.accessToken ? (
-                  "connected"
-                ) : (
-                  <FacebookLogin token={selectedToken.id} />
-                )}
-              </div>
-            ))}
+        </div>
+      </div>
+      <div className="">
+        <div className="pt-4">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[100px]">Username</TableHead>
+                <TableHead className="text-right">Connect</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {selectedToken &&
+                selectedToken?.accounts?.map((account) => (
+                  <TableRow key={account.id}>
+                    <TableCell>{account.username}</TableCell>
+                    <TableCell className="text-right">
+                      {account.accessToken ? (
+                        <Button variant="outline" disabled={true}>
+                          <CheckIcon className="h-4 w-4 mr-2" />
+                          Connected
+                        </Button>
+                      ) : (
+                        <FacebookLogin token={selectedToken.id} />
+                      )}
+                    </TableCell>
+                  </TableRow>
+                ))}
+            </TableBody>
+          </Table>
         </div>
       </div>
     </div>

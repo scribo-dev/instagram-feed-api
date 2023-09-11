@@ -15,6 +15,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { PlusIcon, CheckIcon } from "lucide-react";
+import { prisma } from "@/lib/db";
 
 export default async function Page() {
   const session = await getServerSession(authOptions);

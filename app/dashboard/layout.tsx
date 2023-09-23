@@ -1,15 +1,6 @@
 import "../globals.css";
-import { Button } from "@/components/ui/button";
 import { MainNav } from "./components/main-nav";
 import { UserNav } from "./components/user-nav";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 
 export const metadata = {
   title: "Next.js",
@@ -23,6 +14,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      {/* className="dark"> */}
       <body>
         <div className="flex flex-col">
           <div className="border-b">

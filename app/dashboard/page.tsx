@@ -80,9 +80,12 @@ export default async function Page() {
         </div>
         <div className="flex items-center space-x-2">
           {!selectedToken ? (
-            <form action={create}>
-              <Input name="value" defaultValue={uuidv4()} hidden />
-              <Button type="submit">Get started</Button>
+            <form action={create} className="flex gap-2">
+              <Input name="value" defaultValue={uuidv4()} className="hidden" />
+              <Button type="submit">
+                <PlusIcon className="h-4 w-4 mr-2" />
+                Get started
+              </Button>
             </form>
           ) : (
             <div>

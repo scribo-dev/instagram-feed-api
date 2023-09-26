@@ -322,7 +322,7 @@ export async function POST(
     request,
     new Response(
       JSON.stringify({
-        url: `https://www.facebook.com/v17.0/dialog/oauth?client_id=${process.env.FB_CLIENT_ID}&display=page&extras={"setup":{"channel":"IG_API_ONBOARDING"}}&redirect_uri=${process.env.APP_URL}/auth-integration&response_type=token&scope=instagram_basic,instagram_content_publish,instagram_manage_comments,instagram_manage_insights,pages_show_list,pages_read_engagement`,
+        url: `https://www.facebook.com/v17.0/dialog/oauth?client_id=${process.env.FACEBOOK_CLIENT_ID}&display=page&extras={"setup":{"channel":"IG_API_ONBOARDING"}}&redirect_uri=${process.env.APP_URL}/auth-integration&response_type=token&scope=instagram_basic,instagram_content_publish,instagram_manage_comments,instagram_manage_insights,pages_show_list,pages_read_engagement`,
       }),
       {
         status: 200,

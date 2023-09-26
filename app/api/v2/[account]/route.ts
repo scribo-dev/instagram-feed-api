@@ -78,6 +78,12 @@ async function checkPermission(
  *        required: true
  *        schema:
  *          type: string
+ *      - name: sizes
+ *        in: query
+ *        description: "media sizes in the format of width x height : compression separated with comma. 400x400, x360, 360x. For videos, you can specify a compression value from 0 (lower compression) to 51 (bigger compression)"
+ *        required: false
+ *        schema:
+ *          type: string
  *      - name: media-type
  *        in: query
  *        description: filter by media type
@@ -111,6 +117,14 @@ async function checkPermission(
  *        required: false
  *        schema:
  *          type: integer
+ *      - in: header
+ *        name: Cache-Control
+ *        description: Force sync execution
+ *        schema:
+ *          type: string
+ *          enum:
+ *            - no-cache
+ *        required: false
  *     security:
  *      - BearerAuth:
  *     responses:
@@ -122,6 +136,15 @@ async function checkPermission(
  *              $ref: '#/components/schemas/Error'
  *       200:
  *         description: List of all media types
+ *         headers:
+ *           X-Sync-TTL:
+ *             description: TTL for next sync
+ *             schema:
+ *              type: number
+ *           X-Cache-Hit:
+ *             description: Cache Hit
+ *             schema:
+ *              type: boolean
  *         content:
  *            application/json:
  *              schema:
@@ -144,7 +167,7 @@ export async function GET(
 ) {
   const url = new URL(request.url);
   const sizes = url.searchParams.get("sizes");
-  const quality = url.searchParams.get("quality");
+  // const compression = parseInt(url.searchParams.get("compression") || "23");
   const limit = parseInt(url.searchParams.get("limit") || "10");
   const page = parseInt(url.searchParams.get("page") || "1");
   const mediaType = url.searchParams.get("media-type")?.toUpperCase() as
@@ -200,15 +223,17 @@ export async function GET(
     limit,
   };
 
+  let cacheHit = true;
   const cacheKey = `${account}-temporal-ttl`;
   const keyTTL = await kv.ttl(cacheKey);
   const forceNoCache = request.headers.get("Cache-Control") === "no-cache";
 
   if (keyTTL <= -1 || forceNoCache) {
     try {
+      cacheHit = false;
       const client = await getWorkflowClient();
       await client.start("InstagramInterpreter", {
-        args: [account, sizes, quality],
+        args: [account, sizes],
         taskQueue: "instagram-interpreter",
         workflowId: `instagram-${account}`,
       });
@@ -226,6 +251,8 @@ export async function GET(
       status: 200,
       headers: {
         "Content-Type": "application/json",
+        "X-Sync-TTL": keyTTL.toString(),
+        "X-Cache-Hit": `${cacheHit}`,
       },
     })
   );

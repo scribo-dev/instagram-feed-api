@@ -14,8 +14,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { PlusIcon, CheckIcon } from "lucide-react";
+import { PlusIcon, CheckIcon, ExternalLink } from "lucide-react";
 import { prisma } from "@/lib/db";
+import Link from "next/link";
 
 export default async function Page() {
   const session = await getServerSession(authOptions);
@@ -121,7 +122,12 @@ export default async function Page() {
                           Connected
                         </Button>
                       ) : (
-                        <FacebookLogin token={selectedToken.id} />
+                        <Button asChild>
+                          <Link href="/install">
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Install Guide
+                          </Link>
+                        </Button>
                       )}
                     </TableCell>
                   </TableRow>

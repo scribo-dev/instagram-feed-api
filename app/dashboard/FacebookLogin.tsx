@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 
-export default function FacebookLogin({ token }: { token: string }) {
+export default function FacebookLogin() {
   const origin = process.env.APP_URL;
   return (
     <Button asChild>

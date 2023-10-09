@@ -6,7 +6,7 @@ export const getApiDocs = async () => {
     definition: {
       openapi: "3.0.0",
       info: {
-        title: "Next Swagger API Example",
+        title: "Instagram Swagger API",
         version: "1.0",
       },
       components: {

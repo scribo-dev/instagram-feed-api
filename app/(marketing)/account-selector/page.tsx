@@ -23,6 +23,17 @@ type FacebookAccount = {
   };
 };
 
+type FacebookTokenResponse = {
+  app_id: string;
+  type: string;
+  application: string;
+  data_access_expires_at: number;
+  expires_at: number;
+  is_valid: boolean;
+  scopes: string[];
+  user_id: string;
+};
+
 async function getData(searchParams: {
   [key: string]: string | string[] | undefined;
 }) {
@@ -42,6 +53,23 @@ async function getData(searchParams: {
   return (await res.json()) as FacebookResponse;
 }
 
+async function getTokenInfo(searchParams: {
+  [key: string]: string | string[] | undefined;
+}) {
+  const res = await fetch(
+    `https://graph.facebook.com/debug_token?&input_token=${searchParams["access_token"]}&access_token=${process.env.FACEBOOK_CLIENT_ID}|${process.env.FACEBOOK_CLIENT_SECRET}`,
+    { cache: "no-store" }
+  );
+
+  if (!res.ok) {
+    console.error(res);
+    // This will activate the closest `error.js` Error Boundary
+    throw new Error("Failed to fetch data");
+  }
+
+  return (await res.json()) as { data: FacebookTokenResponse };
+}
+
 export default async function Page({
   params,
   searchParams,
@@ -50,6 +78,7 @@ export default async function Page({
   searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const data = await getData(searchParams);
+  const tokenInfo = await getTokenInfo(searchParams);
 
   const alreadyConnected = await prisma.instagramAccount.findMany({
     select: {
@@ -70,6 +99,24 @@ export default async function Page({
     const id = formData.get("id") as string;
     const instagramUsername = formData.get("username") as string;
     const authToken = formData.get("token") as string;
+    const userId = formData.get("userId") as string;
+
+    const pageTokenRequest = await fetch(
+      `https://graph.facebook.com/oauth/access_token?grant_type=fb_exchange_token&client_id=${process.env.FACEBOOK_CLIENT_ID}&client_secret=${process.env.FACEBOOK_CLIENT_SECRET}&fb_exchange_token=${authToken}`
+    );
+
+    const pageTokenResponse = await pageTokenRequest.json();
+
+    const pageLongTokenRequest = await fetch(
+      `https://graph.facebook.com/v17.0/${userId}/accounts?access_token=${pageTokenResponse.access_token}`
+    );
+    const pageLongTokenResponse = await pageLongTokenRequest.json();
+
+    if (!pageLongTokenResponse.data || pageLongTokenResponse.data.length === 0)
+      return;
+
+    const longLivedToken = pageLongTokenResponse.data[0].access_token;
+
     await prisma.instagramAccount.upsert({
       where: {
         username: instagramUsername,
@@ -77,9 +124,9 @@ export default async function Page({
       create: {
         id: id,
         username: instagramUsername,
-        accessToken: authToken,
+        accessToken: longLivedToken,
       },
-      update: { id: id, accessToken: authToken, updatedAt: new Date() },
+      update: { id: id, accessToken: longLivedToken, updatedAt: new Date() },
     });
     revalidatePath("/account-selector");
     // mutate data
@@ -114,6 +161,11 @@ export default async function Page({
                   <input
                     name="token"
                     defaultValue={account.access_token}
+                    hidden
+                  />
+                  <input
+                    name="userId"
+                    defaultValue={tokenInfo.data.user_id}
                     hidden
                   />
                   {alreadyConnected.find(

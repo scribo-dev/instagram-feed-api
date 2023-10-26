@@ -34,6 +34,7 @@ async function getData(searchParams: {
   );
 
   if (!res.ok) {
+    console.error(res);
     // This will activate the closest `error.js` Error Boundary
     throw new Error("Failed to fetch data");
   }

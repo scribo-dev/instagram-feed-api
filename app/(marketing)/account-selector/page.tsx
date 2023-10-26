@@ -27,7 +27,9 @@ async function getData(searchParams: {
   [key: string]: string | string[] | undefined;
 }) {
   const res = await fetch(
-    `https://graph.facebook.com/v17.0/me/accounts?fields=id%2Cname%2Caccess_token%2Cinstagram_business_account{id,name,username}&access_token=${searchParams["long_lived_token"]}`,
+    `https://graph.facebook.com/v18.0/me/accounts?fields=id%2Cname%2Caccess_token%2Cinstagram_business_account{id,name,username}&access_token=${
+      searchParams["long_lived_token"] || searchParams["access_token"]
+    }`,
     { cache: "no-store" }
   );
 

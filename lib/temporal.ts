@@ -15,9 +15,15 @@ export async function getConnection() {
     address: process.env.TEMPORAL_URL,
   };
   if (process.env.NODE_ENV === "production")
-    connectionParams = { ...connectionParams, tls: {} };
-
-  console.log(connectionParams);
+    connectionParams = {
+      ...connectionParams,
+      tls: {
+        clientCertPair: {
+          crt: Buffer.from(process.env.TEMPORAL_CERT_KEY || "", "utf8"),
+          key: Buffer.from(process.env.TEMPORAL_CERT || "", "utf8"),
+        },
+      },
+    };
 
   return Connection.connect(connectionParams);
 }
@@ -27,5 +33,6 @@ export async function getWorkflowClient() {
 
   return new WorkflowClient({
     connection,
+    namespace: process.env.TEMPORAL_NAMESPACE,
   });
 }

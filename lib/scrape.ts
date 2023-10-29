@@ -58,10 +58,10 @@ export async function scrape(account: string) {
 
   try {
     const client = await getWorkflowClient();
-    const result = await client.start("InstagramInterpreter", {
+    const result = await client.start("InstagramInterpreterV1", {
       args: [account],
       taskQueue: "instagram-interpreter",
-      workflowId: `instagram-${account}`,
+      workflowId: `instagramV1-${account}`,
     });
   } catch (e) {
     console.error(e);

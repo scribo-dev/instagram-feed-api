@@ -108,7 +108,7 @@ enum MediaType {
 
 model Media {
   id               String           @id
-  caption          String?
+  caption          String?          @db.Text()
   mediaProductType MediaProductType
   mediaType        MediaType
   thumbnailUrl     String?          @db.Text()

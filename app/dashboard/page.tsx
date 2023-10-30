@@ -115,17 +115,13 @@ export default async function Page() {
                 selectedToken?.accounts?.map((account) => (
                   <TableRow key={account.id}>
                     <TableCell>
-                      {account.accessToken ? (
-                        <Link
-                          href={`/dashboard/${account.username}`}
-                          className="flex items-center hover:underline"
-                        >
-                          {account.username}
-                          <ExternalLink className="h-3 w-3 ml-1" />
-                        </Link>
-                      ) : (
-                        account.username
-                      )}
+                      <Link
+                        href={`/dashboard/${account.username}`}
+                        className="flex items-center hover:underline"
+                      >
+                        {account.username}
+                        <ExternalLink className="h-3 w-3 ml-1" />
+                      </Link>
                     </TableCell>
                     <TableCell className="text-right">
                       {account.accessToken ? (

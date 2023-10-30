@@ -2,7 +2,9 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import APITabs from "./APITabs";
 import { prisma } from "@/lib/db";
-import { Prisma } from "@prisma/client";
+import { Media } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 type PageProps = {
   params: { account: string };
@@ -18,19 +20,24 @@ export async function generateMetadata({
 }
 
 async function getData(account: string) {
-  let query: Prisma.MediaWhereInput = { username: account };
+  const session = await getServerSession(authOptions);
 
-  const images = await prisma.media.findMany({
-    where: query,
-    orderBy: { timestamp: "desc" },
-    take: 100,
+  const tokens = await prisma?.apiToken.findMany({
+    where: { userId: session?.user?.id },
+    include: {
+      accounts: true,
+    },
   });
-
-  return images;
+  const selectedToken = tokens && tokens[0];
+  return (await (
+    await fetch(`${process.env.APP_URL}/api/v2/${account}`, {
+      headers: { Authorization: `Bearer ${selectedToken.id}` },
+    })
+  ).json()) as { data: Media[] };
 }
 
 export default async function Page({ params }: PageProps) {
-  let images = await getData(params.account);
+  let { data: images } = await getData(params.account);
 
   return (
     <div className="">

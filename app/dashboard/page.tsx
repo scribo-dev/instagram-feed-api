@@ -1,8 +1,6 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
-import { v4 as uuidv4 } from "uuid";
-import FacebookLogin from "./FacebookLogin";
 import {
   Table,
   TableBody,
@@ -14,9 +12,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { PlusIcon, CheckIcon, ExternalLink } from "lucide-react";
+import { ExternalLink, FacebookIcon, RefreshCcw } from "lucide-react";
 import { prisma } from "@/lib/db";
 import Link from "next/link";
+import DisconnectButton from "./components/DisconnectButton";
+import AddAccountButton from "./components/AddAccountButton";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+};
 
 export default async function Page() {
   const session = await getServerSession(authOptions);
@@ -28,6 +33,8 @@ export default async function Page() {
     },
   });
   const selectedToken = tokens && tokens[0];
+  const clientId = process.env.FACEBOOK_CLIENT_ID;
+  const redirectUri = `${process.env.APP_URL}/dashboard/auth-integration`;
 
   async function create(formData: FormData) {
     "use server";
@@ -72,6 +79,22 @@ export default async function Page() {
     revalidatePath("/dashboard");
   }
 
+  async function disconnect(formData: FormData) {
+    "use server";
+    await prisma.apiToken.update({
+      where: { id: selectedToken?.id },
+      data: {
+        accounts: {
+          disconnect: {
+            username: formData.get("account") as string,
+          },
+        },
+      },
+    });
+
+    revalidatePath("/dashboard");
+  }
+
   return (
     <div className="flex-1 space-y-4 p-8 pt-6 container">
       <div className="flex items-center justify-between space-y-2">
@@ -79,30 +102,25 @@ export default async function Page() {
           <h2 className="text-3xl font-bold tracking-tight">Accounts</h2>
           <Badge variant="outline">{selectedToken?.id}</Badge>
         </div>
-        <div className="flex items-center space-x-2">
-          {!selectedToken ? (
-            <form action={create} className="flex gap-2">
-              <Input name="value" defaultValue={uuidv4()} className="hidden" />
-              <Button type="submit">
-                <PlusIcon className="h-4 w-4 mr-2" />
-                Get started
-              </Button>
-            </form>
-          ) : (
-            <div>
-              <form action={addAccount} className="flex gap-2">
-                <Input name="account" placeholder="Instagram username" />
-                <Button type="submit">
-                  <PlusIcon className="h-4 w-4 mr-2" />
-                  Add
-                </Button>
-              </form>
-            </div>
-          )}
+        <div className="flex items-center gap-2">
+          <Button asChild variant={"secondary"}>
+            <a
+              href={`https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&display=page&extras={"setup":{"channel":"IG_API_ONBOARDING"}}&redirect_uri=${redirectUri}&response_type=token&scope=instagram_basic,instagram_manage_insights,pages_show_list,pages_read_engagement,business_management`}
+              target="_blank"
+            >
+              <FacebookIcon size={16} className="mr-2" />
+              Sync Facebook
+            </a>
+          </Button>
+          or
+          <form action={addAccount} className="flex gap-2">
+            <Input name="account" placeholder="Instagram username" />
+            <AddAccountButton />
+          </form>
         </div>
       </div>
-      <div className="">
-        <div className="pt-4">
+      <div className="pt-4">
+        {selectedToken?.accounts?.length > 0 ? (
           <Table>
             <TableHeader>
               <TableRow>
@@ -125,10 +143,14 @@ export default async function Page() {
                     </TableCell>
                     <TableCell className="text-right">
                       {account.accessToken ? (
-                        <Button variant="outline" disabled={true}>
-                          <CheckIcon className="h-4 w-4 mr-2" />
-                          Connected
-                        </Button>
+                        <form action={disconnect}>
+                          <Input
+                            name="account"
+                            defaultValue={account.username}
+                            type="hidden"
+                          />
+                          <DisconnectButton />
+                        </form>
                       ) : (
                         <Button asChild>
                           <Link href="/install">
@@ -142,7 +164,28 @@ export default async function Page() {
                 ))}
             </TableBody>
           </Table>
-        </div>
+        ) : (
+          <div className="mt-32 flex items-center justify-center flex-col">
+            <RefreshCcw size={64} />
+            <p className="mt-12 text-zinc-500 text-center">
+              No accounts found. Click on the "Connect with Facebook" <br /> to
+              select an account
+            </p>
+            <Button
+              asChild
+              variant={"default"}
+              className="mt-4 bg-blue-700 hover:bg-blue-600"
+            >
+              <a
+                href={`https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&display=page&extras={"setup":{"channel":"IG_API_ONBOARDING"}}&redirect_uri=${redirectUri}&response_type=token&scope=instagram_basic,instagram_manage_insights,pages_show_list,pages_read_engagement,business_management`}
+                target="_blank"
+              >
+                <FacebookIcon size={16} className="mr-2" />
+                Connect with Facebook
+              </a>
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -110,18 +110,23 @@ enum MediaType {
 }
 
 model Media {
-  id               String           @id
-  caption          String?          @db.Text()
-  mediaProductType MediaProductType
+  id               String            @id
+  caption          String?           @db.Text()
+  mediaProductType MediaProductType?
   mediaType        MediaType
-  thumbnailUrl     String?          @db.Text()
-  mediaUrl         String           @db.Text()
+  thumbnailUrl     String?           @db.Text()
+  mediaUrl         String            @db.Text()
   shortcode        String
-  timestamp        DateTime
+  timestamp        DateTime?
   username         String
-  user             InstagramAccount @relation(fields: [username], references: [username], onDelete: Cascade)
+  user             InstagramAccount  @relation(fields: [username], references: [username], onDelete: Cascade)
+
+  children Media[] @relation("SubMedias")
+  parent   Media?  @relation("SubMedias", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parentId String?
 
   sizes Json?
 
   @@index([username])
+  @@index([parentId])
 }

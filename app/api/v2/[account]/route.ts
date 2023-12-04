@@ -197,13 +197,14 @@ export async function GET(
     );
 
   const account = params.account;
-  let query: Prisma.MediaWhereInput = { username: account };
+  let query: Prisma.MediaWhereInput = { username: account, parentId: null };
   if (mediaType) query = { ...query, mediaType };
 
   if (mediaProductType) query = { ...query, mediaProductType };
 
   const images = await prisma.media.findMany({
     where: query,
+    include: { children: { orderBy: { timestamp: "desc" } } },
     orderBy: { timestamp: "desc" },
     skip: (page - 1) * limit,
     take: limit,

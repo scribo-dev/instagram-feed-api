@@ -1,8 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverActions: true,
-    serverComponentsExternalPackages: ["prisma"],
+    serverComponentsExternalPackages: ["prisma", "@temporalio/client"],
   },
   images: {
     domains: ["d2b8b46ja6xujp.cloudfront.net"],

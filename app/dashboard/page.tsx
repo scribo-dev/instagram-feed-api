@@ -1,4 +1,3 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import {
@@ -18,6 +17,7 @@ import Link from "next/link";
 import DisconnectButton from "./components/DisconnectButton";
 import AddAccountButton from "./components/AddAccountButton";
 import { Metadata } from "next";
+import { authOptions } from "@/lib/auth-options";
 
 export const metadata: Metadata = {
   title: "Dashboard",

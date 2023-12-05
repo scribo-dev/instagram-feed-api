@@ -3,8 +3,7 @@
 import * as bcrypt from "bcrypt";
 import { prisma } from "@/lib/db";
 import { v4 as uuidv4 } from "uuid";
-
-const saltRounds = 10;
+import { hashPassword } from "@/lib/password";
 
 export async function register(name: string, email: string, password: string) {
   if (password.length < 6) {
@@ -31,7 +30,3 @@ export async function register(name: string, email: string, password: string) {
     return { error: e.message };
   }
 }
-
-export const hashPassword = (string: string) => {
-  return bcrypt.hash(string, saltRounds);
-};

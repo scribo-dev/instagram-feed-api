@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import { prisma } from "@/lib/db";
 import { Media } from "@prisma/client";
 import { getServerSession } from "next-auth";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+
 import Link from "next/link";
+import { authOptions } from "@/lib/auth-options";
 
 type PageProps = {
   params: { account: string };

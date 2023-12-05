@@ -1,9 +1,7 @@
-import * as bcrypt from "bcrypt";
 import { prisma } from "@/lib/db";
+import { hashPassword } from "@/lib/password";
 import { Prisma } from "@prisma/client";
 import { NextRequest } from "next/server";
-
-const saltRounds = 10;
 
 export async function POST(req: NextRequest) {
   let errors = [];
@@ -32,7 +30,3 @@ export async function POST(req: NextRequest) {
     }
   }
 }
-
-export const hashPassword = (string: string) => {
-  return bcrypt.hash(string, saltRounds);
-};

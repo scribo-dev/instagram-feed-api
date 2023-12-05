@@ -1,4 +1,4 @@
-import { getMediaMetrics } from "../../../photo/[id]/page";
+import { getMediaMetrics } from "../../../photo/[id]/actions";
 import MetricsSlider from "./MetricsSlider";
 
 export default async function Page({

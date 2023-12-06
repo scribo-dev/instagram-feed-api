@@ -1,14 +1,16 @@
 "use client";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import MediaMetrics, { Metric } from "../../../photo/[id]/MediaMetrics";
-import { Media } from "@prisma/client";
+import { Media, Prisma } from "@prisma/client";
 import { useRouter } from "next/navigation";
 
 export default function MetricsSlider({
   media,
   metrics,
 }: {
-  media: Media;
+  media: Prisma.MediaGetPayload<{
+    include: { children: true };
+  }>;
   metrics: Metric[];
 }) {
   const router = useRouter();
@@ -22,12 +24,10 @@ export default function MetricsSlider({
       }}
       key="feed-modal"
     >
-      <SheetContent className="w-[400px] sm:w-[540px]">
+      <SheetContent className="w-[400px] sm:w-[540px] overflow-auto p-0">
         <div className="relative h-full">
-          <div className="relative pt-6 pb-16 ">
-            <div className="mx-auto max-w-[309px] p-2 ">
-              <MediaMetrics media={media} metrics={metrics} />
-            </div>
+          <div className="relative pb-16 ">
+            <MediaMetrics media={media} metrics={metrics} />
           </div>
         </div>
       </SheetContent>

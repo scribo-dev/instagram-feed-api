@@ -38,6 +38,9 @@ export async function getMediaMetrics(account: string, id: string) {
     where: {
       id: id,
     },
+    include: {
+      children: { orderBy: { timestamp: "desc" } },
+    },
   });
 
   return { media, metrics };

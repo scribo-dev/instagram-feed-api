@@ -1,24 +1,8 @@
 "use client";
 
+import { Metric } from "@/lib/fb-types";
 import { Prisma, Media } from "@prisma/client";
 import Image from "next/image";
-
-export interface MetricsResponse {
-  data: Metric[];
-}
-
-export interface Metric {
-  name: string;
-  values: MetricValue[];
-  period: string;
-  description: string;
-  title: string;
-  id: string;
-}
-
-export interface MetricValue {
-  value: number;
-}
 
 function MediaBox({ media, className }: { media?: Media; className: string }) {
   return media?.mediaType === "VIDEO" ? (

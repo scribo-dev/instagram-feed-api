@@ -24,7 +24,7 @@ export default function MetricsSlider({
       }}
       key="feed-modal"
     >
-      <SheetContent className="w-[400px] sm:w-[540px] overflow-auto p-0">
+      <SheetContent className="md:max-w-[540px] overflow-auto p-0">
         <div className="relative h-full">
           <div className="relative pb-16 ">
             <MediaMetrics media={media} metrics={metrics} />

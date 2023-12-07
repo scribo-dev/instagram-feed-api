@@ -6,6 +6,8 @@ import { getServerSession } from "next-auth";
 
 import Link from "next/link";
 import { authOptions } from "@/lib/auth-options";
+import { RefreshCcw } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 type PageProps = {
   params: { account: string };
@@ -49,7 +51,23 @@ export default async function Page({ params }: PageProps) {
               <h1 className="text-3xl tracking-tight text-gray-900">
                 Account {params.account}
               </h1>
-
+              {!images || images.length === 0 ? (
+                <div className="flex flex-col w-full items-center mt-32">
+                  <RefreshCcw size={64} />
+                  <span className="mt-8 text-lg">Syncing...</span>
+                  <span className="text-sm text-zinc-600">
+                    Please retry in a couple of minutes
+                  </span>
+                  <Button asChild>
+                    <Link
+                      className="mt-4"
+                      href={`/dashboard/${params.account}`}
+                    >
+                      Refresh
+                    </Link>
+                  </Button>
+                </div>
+              ) : null}
               <div className="grid md:grid-cols-3 justify-center mt-6 flex-col gap-2 rounded-lg">
                 {images?.map((i) => (
                   <Link

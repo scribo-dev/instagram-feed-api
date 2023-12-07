@@ -28,14 +28,14 @@ function MediaBox({ media, className }: { media?: Media; className: string }) {
       autoPlay={false}
       width={400}
       height={400}
-      className={className}
+      className={className.replace("object-cover", "")}
     />
   ) : (
     <Image
       src={media?.mediaUrl!}
       alt={media?.caption ?? "Media Caption"}
-      width={400}
-      height={400}
+      width={540}
+      height={540}
       className={className}
     />
   );
@@ -56,16 +56,16 @@ export default function MediaMetrics({
         <div className="relative w-full flex gap-2 snap-x snap-mandatory overflow-x-auto">
           {media?.children?.map((m) => (
             <div className="snap-center shrink-0" key={m.id}>
-              <MediaBox media={m} className="w-full h-[309px] object-cover" />
+              <MediaBox media={m} className="w-full h-[540px] object-cover" />
             </div>
           ))}
         </div>
       ) : (
-        <MediaBox media={media} className="w-full h-[309px] object-cover" />
+        <MediaBox media={media} className="w-full h-[540px] object-cover" />
       )}
-      <div className="p-4">
+      <div className="p-4 ">
         <p className="mt-4 text-zinc-600 text-sm">{media?.caption}</p>
-        <div className="flex flex-col mt-8 gap-2">
+        <div className="flex flex-col mt-8 gap-2 text-zinc-600 text-sm">
           {metrics?.map((metric) => (
             <div key={metric.id} className="flex justify-between">
               <p className="text-zinc-500">{metric.title}: </p>

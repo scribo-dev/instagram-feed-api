@@ -17,7 +17,10 @@ export default async function Page({
 }: {
   params: { account: string; dates: string[] };
 }) {
-  const { profile, metrics, error } = await getMetrics(params.account);
+  const { profile, metrics, error } = await getMetrics(
+    params.account,
+    params.dates
+  );
 
   return (
     <div className="relative h-full ">

@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { MetricValues, MetricsResponse } from "@/lib/fb-types";
+import { parseISO } from "date-fns";
 
 export type InstagramProfile = {
   id: string;
@@ -37,9 +38,13 @@ export async function getMetrics(account: string, dates?: string[]) {
       color: "cyan",
     },
   ];
-  const metricsRequest = await fetch(
-    `https://graph.facebook.com/v18.0/${instagramAccount.id}/insights?metric=impressions,reach,profile_views&period=day&access_token=${instagramAccount?.accessToken}`
-  );
+  let url = `https://graph.facebook.com/v18.0/${instagramAccount.id}/insights?metric=impressions,reach,profile_views&period=day&access_token=${instagramAccount?.accessToken}`;
+  if (dates && dates.length > 1) {
+    const since = getTimestampInSeconds(parseISO(dates[0]));
+    const until = getTimestampInSeconds(parseISO(dates[1]));
+    url += `&since=${since}&until=${until}`;
+  }
+  const metricsRequest = await fetch(url);
 
   const metricsResponse = (await metricsRequest.json()) as MetricsResponse;
   const metrics = categories.map((c) => {
@@ -60,4 +65,8 @@ export async function getMetrics(account: string, dates?: string[]) {
   });
 
   return { profile, metrics, error: null };
+}
+
+function getTimestampInSeconds(date: Date) {
+  return Math.floor(date.getTime() / 1000);
 }

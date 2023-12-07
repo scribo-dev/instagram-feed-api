@@ -1,21 +1,5 @@
 import { prisma } from "@/lib/db";
-
-export interface MetricsResponse {
-  data: Metric[];
-}
-
-export interface Metric {
-  name: string;
-  values: MetricValue[];
-  period: string;
-  description: string;
-  title: string;
-  id: string;
-}
-
-export interface MetricValue {
-  value: number;
-}
+import { Metric, MetricsResponse } from "@/lib/fb-types";
 
 export async function getMediaMetrics(account: string, id: string) {
   const instagramAccount = await prisma?.instagramAccount?.findFirst({
@@ -37,6 +21,9 @@ export async function getMediaMetrics(account: string, id: string) {
   const media = await prisma?.media?.findFirst({
     where: {
       id: id,
+    },
+    include: {
+      children: { orderBy: { timestamp: "desc" } },
     },
   });
 

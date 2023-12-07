@@ -1,4 +1,5 @@
 export default function Loading() {
+  return null;
   return (
     <div className="relative h-full ">
       <div className="relative pt-6 pb-16 ">

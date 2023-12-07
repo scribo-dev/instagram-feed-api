@@ -6,7 +6,7 @@ import { getServerSession } from "next-auth";
 
 import Link from "next/link";
 import { authOptions } from "@/lib/auth-options";
-import { RefreshCcw } from "lucide-react";
+import { LineChart, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type PageProps = {
@@ -48,9 +48,19 @@ export default async function Page({ params }: PageProps) {
         <div className="relative pt-6 pb-16 ">
           <div className="mx-auto max-w-[1000px] p-2 ">
             <div className="">
-              <h1 className="text-3xl tracking-tight text-gray-900">
-                Account {params.account}
-              </h1>
+              <div className="flex items-center">
+                <h1 className="flex-1 text-3xl tracking-tight text-gray-900">
+                  Account {params.account}
+                </h1>
+                <div>
+                  <Button asChild>
+                    <Link href={`/dashboard/${params.account}/metrics`}>
+                      <LineChart />
+                      Metrics
+                    </Link>
+                  </Button>
+                </div>
+              </div>
               {!images || images.length === 0 ? (
                 <div className="flex flex-col w-full items-center mt-32">
                   <RefreshCcw size={64} />
@@ -73,14 +83,14 @@ export default async function Page({ params }: PageProps) {
                   <Link
                     key={i.id}
                     href={`/dashboard/${params.account}/photo/${i.id}`}
-                    className="w-[309px] h-[309px] overflow-hidden"
+                    className="h-[309px] overflow-hidden"
                   >
                     <Image
                       src={i.thumbnailUrl!}
                       alt={i.caption ?? "Media Caption"}
                       width={400}
                       height={400}
-                      className="w-[309px] h-[309px] object-cover"
+                      className=" h-[309px] object-cover"
                     />
                   </Link>
                 ))}

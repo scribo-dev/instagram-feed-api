@@ -4,7 +4,16 @@ const nextConfig = {
     serverComponentsExternalPackages: ["prisma", "@temporalio/client"],
   },
   images: {
-    domains: ["d2b8b46ja6xujp.cloudfront.net"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "d2b8b46ja6xujp.cloudfront.net",
+      },
+      {
+        protocol: "https",
+        hostname: "**.fbcdn.net",
+      },
+    ],
   },
 };
 

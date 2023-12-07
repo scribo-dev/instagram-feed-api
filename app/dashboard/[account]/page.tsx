@@ -101,6 +101,7 @@ export default async function Page({ params }: PageProps) {
                     key={i.id}
                     href={`/dashboard/${params.account}/photo/${i.id}`}
                     className="w-[100px] h-[100px] rounded-full overflow-hidden snap-center shrink-0"
+                    scroll={false}
                   >
                     <Image
                       src={i.thumbnailUrl!}
@@ -118,6 +119,7 @@ export default async function Page({ params }: PageProps) {
                     key={i.id}
                     href={`/dashboard/${params.account}/photo/${i.id}`}
                     className="h-[309px] overflow-hidden"
+                    scroll={false}
                   >
                     <Image
                       src={i.thumbnailUrl!}

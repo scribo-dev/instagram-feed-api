@@ -1,8 +1,9 @@
 "use client";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import MediaMetrics, { Metric } from "../../../photo/[id]/MediaMetrics";
+import MediaMetrics from "../../../photo/[id]/MediaMetrics";
 import { Media, Prisma } from "@prisma/client";
 import { useRouter } from "next/navigation";
+import { Metric } from "@/lib/fb-types";
 
 export default function MetricsSlider({
   media,

@@ -6,7 +6,7 @@ import { BarList, Card } from "@tremor/react";
 import Image from "next/image";
 
 function MediaBox({ media, className }: { media?: Media; className: string }) {
-  return media?.mediaType === "VIDEO" ? (
+  return media?.mediaType === "VIDEO" && media.mediaUrl.includes(".mp4") ? (
     <video
       src={media.mediaUrl}
       controls={true}
@@ -53,7 +53,7 @@ export default function MediaMetrics({
         <MediaBox media={media} className="w-full h-[540px] object-cover" />
       )}
       {barData && barData.length > 0 && (
-        <div className="p-4 ">
+        <div className="p-8 ">
           <p className="mt-4 text-zinc-600 text-sm">{media?.caption}</p>
           <Card className="flex flex-col mt-8 gap-2 text-zinc-600 text-sm">
             <BarList

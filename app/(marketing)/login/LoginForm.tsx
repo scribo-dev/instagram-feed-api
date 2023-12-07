@@ -61,7 +61,7 @@ export function LoginForm() {
           onClick={() => signIn("facebook", { callbackUrl: "/dashboard" })}
         >
           <IconFacebook />
-          Sign Up with Facebook
+          Sign In with Facebook
         </Button>
       </form>
     </>

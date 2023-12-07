@@ -15,3 +15,12 @@ export interface MetricValue {
   value: number;
   end_time?: string;
 }
+
+export interface ResponseError {
+  error: {
+    message: string;
+    type: string;
+    code: number;
+    fbtrace_id: string;
+  };
+}

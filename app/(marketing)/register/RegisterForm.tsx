@@ -80,7 +80,7 @@ function SubmitButton() {
   const { pending } = useFormStatus();
   return (
     <Button className="w-full mb-4" type="submit" disabled={pending}>
-      {pending ? "Loading..." : "Sign In"}
+      {pending ? "Loading..." : "Sign Up"}
     </Button>
   );
 }

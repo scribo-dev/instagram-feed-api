@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db";
-import { MetricValues, MetricsResponse } from "@/lib/fb-types";
-import { parseISO } from "date-fns";
+import { MetricsResponse } from "@/lib/fb-types";
+import { parseISO, intlFormat } from "date-fns";
 
 export type InstagramProfile = {
   id: string;
@@ -51,11 +51,10 @@ export async function getMetrics(account: string, dates?: string[]) {
     const categoryMetrics = metricsResponse.data
       .find((d) => d.name === c.name)
       ?.values.map((v) => {
-        const value = v as MetricValues;
         return {
-          date: value.end_time,
-          metric: value.value,
-          [c.name]: value.value,
+          date: intlFormat(parseISO(v.end_time!)),
+          metric: v.value,
+          [c.name]: v.value,
         };
       });
     return {

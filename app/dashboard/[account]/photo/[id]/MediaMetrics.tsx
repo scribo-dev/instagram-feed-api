@@ -2,6 +2,7 @@
 
 import { Metric } from "@/lib/fb-types";
 import { Prisma, Media } from "@prisma/client";
+import { BarList, Card } from "@tremor/react";
 import Image from "next/image";
 
 function MediaBox({ media, className }: { media?: Media; className: string }) {
@@ -34,6 +35,10 @@ export default function MediaMetrics({
   }>;
   metrics?: Metric[];
 }) {
+  const barData = metrics.map((m) => ({
+    name: m.title,
+    value: m.values[0].value,
+  }));
   return (
     <div>
       {media?.children && media?.children?.length > 0 ? (
@@ -49,14 +54,14 @@ export default function MediaMetrics({
       )}
       <div className="p-4 ">
         <p className="mt-4 text-zinc-600 text-sm">{media?.caption}</p>
-        <div className="flex flex-col mt-8 gap-2 text-zinc-600 text-sm">
-          {metrics?.map((metric) => (
-            <div key={metric.id} className="flex justify-between">
-              <p className="text-zinc-500">{metric.title}: </p>
-              <span className="text-black">{metric.values[0].value}</span>
-            </div>
-          ))}
-        </div>
+        <Card className="flex flex-col mt-8 gap-2 text-zinc-600 text-sm">
+          <BarList
+            data={barData}
+            showAnimation={false}
+            color="cyan"
+            // valueFormatter={valueFormatter}
+          />
+        </Card>
       </div>
     </div>
   );

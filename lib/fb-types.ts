@@ -4,7 +4,7 @@ export interface MetricsResponse {
 
 export interface Metric {
   name: string;
-  values: MetricValue[] | MetricValues[];
+  values: MetricValue[];
   period: string;
   description: string;
   title: string;
@@ -13,9 +13,5 @@ export interface Metric {
 
 export interface MetricValue {
   value: number;
-}
-
-export interface MetricValues {
-  value: number;
-  end_time: string;
+  end_time?: string;
 }

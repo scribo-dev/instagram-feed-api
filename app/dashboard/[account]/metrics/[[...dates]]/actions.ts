@@ -1,3 +1,4 @@
+import { prisma } from "@/lib/db";
 import { MetricValues, MetricsResponse } from "@/lib/fb-types";
 
 export type InstagramProfile = {

@@ -96,7 +96,7 @@ export default async function Page({ params }: PageProps) {
                 </div>
               ) : null}
               <div className="flex mt-6 gap-2 rounded-lg snap-x overflow-x-auto pb-2">
-                {stories?.map((i) => (
+                {stories?.reverse().map((i) => (
                   <Link
                     key={i.id}
                     href={`/dashboard/${params.account}/photo/${i.id}`}

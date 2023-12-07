@@ -95,12 +95,12 @@ export default async function Page({ params }: PageProps) {
                   </Button>
                 </div>
               ) : null}
-              <div className="grid md:grid-cols-3 justify-center mt-6 flex-col gap-2 rounded-lg">
+              <div className="flex mt-6 gap-2 rounded-lg snap-x overflow-x-auto pb-2">
                 {stories?.map((i) => (
                   <Link
                     key={i.id}
                     href={`/dashboard/${params.account}/photo/${i.id}`}
-                    className="w-[100px] h-[100px] rounded-full overflow-hidden"
+                    className="w-[100px] h-[100px] rounded-full overflow-hidden snap-center shrink-0"
                   >
                     <Image
                       src={i.thumbnailUrl!}

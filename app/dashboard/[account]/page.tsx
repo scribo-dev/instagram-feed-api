@@ -32,15 +32,32 @@ async function getData(account: string) {
     },
   });
   const selectedToken = tokens && tokens[0];
-  return (await (
-    await fetch(`${process.env.APP_URL}/api/v2/${account}`, {
-      headers: { Authorization: `Bearer ${selectedToken.id}` },
-    })
-  ).json()) as { data: Media[] };
+  const images = (
+    await (
+      await fetch(
+        `${process.env.APP_URL}/api/v2/${account}?media-product-type=FEED`,
+        {
+          headers: { Authorization: `Bearer ${selectedToken.id}` },
+        }
+      )
+    ).json()
+  ).data as Media[];
+
+  const stories = (
+    await (
+      await fetch(
+        `${process.env.APP_URL}/api/v2/${account}?media-product-type=STORY`,
+        {
+          headers: { Authorization: `Bearer ${selectedToken.id}` },
+        }
+      )
+    ).json()
+  ).data as Media[];
+  return { images, stories };
 }
 
 export default async function Page({ params }: PageProps) {
-  let { data: images } = await getData(params.account);
+  let { images, stories } = await getData(params.account);
 
   return (
     <div className="">
@@ -78,6 +95,23 @@ export default async function Page({ params }: PageProps) {
                   </Button>
                 </div>
               ) : null}
+              <div className="grid md:grid-cols-3 justify-center mt-6 flex-col gap-2 rounded-lg">
+                {stories?.map((i) => (
+                  <Link
+                    key={i.id}
+                    href={`/dashboard/${params.account}/photo/${i.id}`}
+                    className="w-[100px] h-[100px] rounded-full overflow-hidden"
+                  >
+                    <Image
+                      src={i.thumbnailUrl!}
+                      alt={i.caption ?? "Media Caption"}
+                      width={100}
+                      height={100}
+                      className=" h-[100px] object-cover"
+                    />
+                  </Link>
+                ))}
+              </div>
               <div className="grid md:grid-cols-3 justify-center mt-6 flex-col gap-2 rounded-lg">
                 {images?.map((i) => (
                   <Link

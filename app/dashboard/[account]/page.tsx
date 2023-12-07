@@ -35,7 +35,7 @@ async function getData(account: string) {
   const images = (
     await (
       await fetch(
-        `${process.env.APP_URL}/api/v2/${account}?media-product-type=FEED`,
+        `${process.env.APP_URL}/api/v2/${account}?media-product-type=FEED,REELS`,
         {
           headers: { Authorization: `Bearer ${selectedToken.id}` },
         }
@@ -67,7 +67,7 @@ export default async function Page({ params }: PageProps) {
             <div className="">
               <div className="flex items-center">
                 <h1 className="flex-1 text-3xl tracking-tight text-gray-900">
-                  Account {params.account}
+                  {params.account}
                 </h1>
                 <div>
                   <Button asChild>

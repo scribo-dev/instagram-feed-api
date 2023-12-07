@@ -52,17 +52,19 @@ export default function MediaMetrics({
       ) : (
         <MediaBox media={media} className="w-full h-[540px] object-cover" />
       )}
-      <div className="p-4 ">
-        <p className="mt-4 text-zinc-600 text-sm">{media?.caption}</p>
-        <Card className="flex flex-col mt-8 gap-2 text-zinc-600 text-sm">
-          <BarList
-            data={barData}
-            showAnimation={false}
-            color="cyan"
-            // valueFormatter={valueFormatter}
-          />
-        </Card>
-      </div>
+      {barData && barData.length > 0 && (
+        <div className="p-4 ">
+          <p className="mt-4 text-zinc-600 text-sm">{media?.caption}</p>
+          <Card className="flex flex-col mt-8 gap-2 text-zinc-600 text-sm">
+            <BarList
+              data={barData}
+              showAnimation={false}
+              color="slate"
+              // valueFormatter={valueFormatter}
+            />
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

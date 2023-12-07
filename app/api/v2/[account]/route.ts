@@ -7,7 +7,7 @@ import { Ratelimit } from "@upstash/ratelimit";
 import { prisma } from "@/lib/db";
 import { getWorkflowClient } from "@/lib/temporal";
 import { kv } from "@/lib/cache";
-import { Prisma } from "@prisma/client";
+import { MediaProductType, Prisma } from "@prisma/client";
 
 if (!process.env.KV_URL || !process.env.KV_TOKEN) throw "env not found";
 
@@ -200,7 +200,13 @@ export async function GET(
   let query: Prisma.MediaWhereInput = { username: account, parentId: null };
   if (mediaType) query = { ...query, mediaType };
 
-  if (mediaProductType) query = { ...query, mediaProductType };
+  if (mediaProductType)
+    query = {
+      ...query,
+      mediaProductType: {
+        in: mediaProductType.split(",") as MediaProductType[],
+      },
+    };
 
   const images = await prisma.media.findMany({
     where: query,

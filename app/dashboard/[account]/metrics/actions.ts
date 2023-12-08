@@ -49,17 +49,28 @@ export async function getMetrics(account: string, dates?: string[]) {
   if (dates && dates.length > 1) {
     const startDate = parseISO(dates[0]);
     const endDate = parseISO(dates[1]);
-    const since = getUnixTime(startOfDay(startDate));
+    const since = getUnixTime(
+      startDate
+      // new Date(
+      //   startDate.getFullYear(),
+      //   startDate.getMonth(),
+      //   startDate.getDate(),
+      //   12,
+      //   0,
+      //   0
+      // )
+    );
     // endOfDay was changing dates due to timezones
     const until = getUnixTime(
-      new Date(
-        endDate.getFullYear(),
-        endDate.getMonth(),
-        endDate.getDate(),
-        12,
-        0,
-        0
-      )
+      endDate
+      // new Date(
+      //   endDate.getFullYear(),
+      //   endDate.getMonth(),
+      //   endDate.getDate(),
+      //   12,
+      //   0,
+      //   0
+      // )
     );
     console.log({ since, until });
     url += `&since=${since}&until=${until}`;

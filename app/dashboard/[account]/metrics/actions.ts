@@ -1,6 +1,12 @@
 import { prisma } from "@/lib/db";
 import { MetricsResponse, ResponseError } from "@/lib/fb-types";
-import { parseISO, intlFormat, startOfDay, endOfDay } from "date-fns";
+import {
+  parseISO,
+  intlFormat,
+  startOfDay,
+  endOfDay,
+  getUnixTime,
+} from "date-fns";
 
 export type InstagramProfile = {
   id: string;
@@ -41,8 +47,21 @@ export async function getMetrics(account: string, dates?: string[]) {
   let url = `https://graph.facebook.com/v18.0/${instagramAccount.id}/insights?metric=impressions,reach,profile_views&period=day&access_token=${instagramAccount?.accessToken}`;
 
   if (dates && dates.length > 1) {
-    const since = getTimestampInSeconds(startOfDay(parseISO(dates[0])));
-    const until = getTimestampInSeconds(endOfDay(parseISO(dates[1])));
+    const startDate = parseISO(dates[0]);
+    const endDate = parseISO(dates[1]);
+    const since = getUnixTime(startOfDay(startDate));
+    // endOfDay was changing dates due to timezones
+    const until = getUnixTime(
+      new Date(
+        endDate.getFullYear(),
+        endDate.getMonth(),
+        endDate.getDate(),
+        12,
+        0,
+        0
+      )
+    );
+    console.log({ since, until });
     url += `&since=${since}&until=${until}`;
   }
   const metricsRequest = await fetch(url);

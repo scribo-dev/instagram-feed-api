@@ -1,8 +1,6 @@
 import { GenerateFeed } from "../_actions";
 import type { Metadata } from "next";
 
-export const runtime = "edge";
-
 export const metadata: Metadata = {
   title: "Instagram Feed API",
   description: "Generate an API for your Instagram Feed in seconds",

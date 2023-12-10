@@ -4,8 +4,6 @@ import { scrape } from "../../../lib/scrape";
 import APITabs from "./APITabs";
 import Link from "next/link";
 
-// export const runtime = "edge";
-
 type PageProps = {
   params: { account: string };
 };

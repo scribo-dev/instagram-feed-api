@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import Footer from "../Footer";
 import Signin from "../Signin";
+import { UserNav } from "../dashboard/components/user-nav";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -47,7 +48,7 @@ export default function RootLayout({
               ))}
             </div>
             <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-              <Signin />
+              <UserNav />
             </div>
           </nav>
         </header>

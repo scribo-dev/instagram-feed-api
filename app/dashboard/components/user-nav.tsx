@@ -1,3 +1,4 @@
+import Signin from "@/app/Signin";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,6 +18,8 @@ import Link from "next/link";
 
 export async function UserNav() {
   const session = await getServerSession(authOptions);
+
+  if (!session) return <Signin />;
 
   return (
     <DropdownMenu>
@@ -41,12 +44,16 @@ export async function UserNav() {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        {/* <DropdownMenuGroup>
-          <DropdownMenuItem>Billing</DropdownMenuItem>
-          <DropdownMenuItem>Settings</DropdownMenuItem>
+        <DropdownMenuGroup>
+          <DropdownMenuItem asChild>
+            <Link href="/dashboard">Dashboard</Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link href="/api-doc">Docs</Link>
+          </DropdownMenuItem>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator /> */}
-        <DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
           <Link href="/api/auth/signout">Log out</Link>
         </DropdownMenuItem>
       </DropdownMenuContent>

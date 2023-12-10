@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { CheckIcon, PlusCircleIcon } from "lucide-react";
 import FacebookLogin from "@/app/dashboard/FacebookLogin";
 
-// export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export default async function Page({

@@ -5,7 +5,6 @@ import { revalidatePath } from "next/cache";
 import { Button } from "@/components/ui/button";
 import { CheckIcon, PlusCircleIcon } from "lucide-react";
 
-// export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 type FacebookResponse = {

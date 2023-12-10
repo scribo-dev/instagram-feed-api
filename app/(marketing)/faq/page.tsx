@@ -1,7 +1,5 @@
 import { Metadata } from "next";
 
-export const runtime = "edge";
-
 export const metadata: Metadata = {
   title: "FAQ | Instagram Feed API",
   description: "Common questions about Instagram Feed API",

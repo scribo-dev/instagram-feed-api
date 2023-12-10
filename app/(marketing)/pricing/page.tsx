@@ -21,8 +21,6 @@ const tiers = [
   },
 ];
 
-export const runtime = "edge";
-
 export const metadata: Metadata = {
   title: "Pricing | Instagram Feed API",
   description: "Start using your Instagram Feed API for free",

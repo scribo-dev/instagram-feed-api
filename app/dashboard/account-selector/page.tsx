@@ -14,7 +14,6 @@ import { getServerSession } from "next-auth";
 import ConnectButton from "./ConnectButton";
 import { authOptions } from "@/lib/auth-options";
 
-// export const runtime = "edge";
 export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {

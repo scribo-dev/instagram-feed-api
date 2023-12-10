@@ -6,7 +6,7 @@ import { useParams, usePathname } from "next/navigation";
 
 const menus = [
   { label: "Overview", href: "/dashboard" },
-  { label: "Docs", href: "/api-doc" },
+  // { label: "Docs", href: "/api-doc" },
 ];
 
 export function MainNav({

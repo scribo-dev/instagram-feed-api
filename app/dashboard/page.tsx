@@ -18,6 +18,17 @@ import DisconnectButton from "./components/DisconnectButton";
 import AddAccountButton from "./components/AddAccountButton";
 import { Metadata } from "next";
 import { authOptions } from "@/lib/auth-options";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export const metadata: Metadata = {
   title: "Dashboard",
@@ -103,15 +114,35 @@ export default async function Page() {
           <Badge variant="outline">{selectedToken?.id}</Badge>
         </div>
         <div className="flex items-center gap-2">
-          <Button asChild variant={"secondary"}>
-            <a
-              href={`https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&display=page&extras={"setup":{"channel":"IG_API_ONBOARDING"}}&redirect_uri=${redirectUri}&response_type=token&scope=instagram_basic,instagram_manage_insights,pages_show_list,pages_read_engagement,business_management`}
-              target="_blank"
-            >
-              <FacebookIcon size={16} className="mr-2" />
-              Sync Facebook
-            </a>
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant={"secondary"}>
+                <FacebookIcon size={16} className="mr-2" />
+                Sync Facebook
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Warning</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Notice that if you don’t have an Instagram business account,
+                  you will have to convert your current account into a business
+                  one in order to use this application
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction asChild>
+                  <a
+                    href={`https://www.facebook.com/v18.0/dialog/oauth?client_id=${clientId}&display=page&extras={"setup":{"channel":"IG_API_ONBOARDING"}}&redirect_uri=${redirectUri}&response_type=token&scope=instagram_basic,instagram_manage_insights,pages_show_list,pages_read_engagement,business_management`}
+                    target="_blank"
+                  >
+                    Continue
+                  </a>
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
           or
           <form action={addAccount} className="flex gap-2">
             <Input name="account" placeholder="Instagram username" />

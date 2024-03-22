@@ -28,14 +28,14 @@ export async function scrape(account: string) {
   );
 
   let responseRequest = await fetch(
-    `https://api.scrape.do/?token=${process.env.SCRAPE_API}&url=https://www.instagram.com/${account}/?__a=1%26__d=dis`,
+    `https://api.scrape.do/?token=${process.env.SCRAPE_API}&url=https://www.instagram.com/api/v1/users/web_profile_info/?username=${account}`,
     { next: { revalidate: 60 * 5 } }
   );
 
   let response = await responseRequest.json();
 
   let images: InstagramImage[] = sortInstagramImages(
-    response.graphql.user.edge_owner_to_timeline_media.edges.map(
+    response.data.user.edge_owner_to_timeline_media.edges.map(
       ({ node }: any) =>
         ({
           slug: node.shortcode,

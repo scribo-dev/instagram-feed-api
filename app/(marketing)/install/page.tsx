@@ -8,13 +8,7 @@ import FacebookLogin from "@/app/dashboard/FacebookLogin";
 
 export const dynamic = "force-dynamic";
 
-export default async function Page({
-  params,
-  searchParams,
-}: {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function Page() {
   return (
     <div className="">
       <div className="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-40">

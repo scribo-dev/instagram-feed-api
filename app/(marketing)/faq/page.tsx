@@ -14,13 +14,12 @@ const faqs = [
   {
     id: 2,
     question: "Whats the limitation of the free plan?",
-    answer: "On the free plan you are limited to 1,000 requests per month",
+    answer: "On the free plan you are limited to 5 requests per 10 seconds",
   },
   {
     id: 3,
     question: "What happens if I need more?",
-    answer:
-      "If you exceed the 1,000 requests limit, we will contact you to upgrade your plan",
+    answer: "Please contact us to upgrade your plan at contact@scribo.dev",
   },
 ];
 

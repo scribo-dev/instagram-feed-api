@@ -1,4 +1,5 @@
 import { NextRequest } from "next/server";
+import { ipAddress } from "@vercel/functions";
 
 import cors from "../../cors";
 import { scrape } from "@/lib/scrape";
@@ -33,18 +34,17 @@ const clients = [
   "907eb8cece1b1c7a3f2ab59533041de9", // Black Swan
 ];
 
-export const revalidate = 60 * 5;
+export const maxDuration = 300;
 
 export async function GET(
   request: NextRequest,
-  {
-    params,
-  }: {
-    params: { account: string };
+  props: {
+    params: Promise<{ account: string }>;
   }
 ) {
+  const params = await props.params;
   const auth = request.headers.get("Authorization")?.replace("Bearer ", "");
-  let id = request.ip ?? "anonymous";
+  let id = ipAddress(request) ?? "anonymous";
   let rate = ratelimit.free;
 
   if (auth && clients.includes(auth)) {

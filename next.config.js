@@ -1,8 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   experimental: {
-    serverComponentsExternalPackages: ["prisma", "@temporalio/client"],
+    after: true,
   },
+  serverExternalPackages: ["prisma", "@temporalio/client"],
   images: {
     remotePatterns: [
       {

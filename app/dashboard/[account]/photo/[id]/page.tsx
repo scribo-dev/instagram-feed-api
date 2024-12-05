@@ -1,11 +1,12 @@
 import MediaMetrics from "./MediaMetrics";
 import { getMediaMetrics } from "./actions";
 
-export default async function Page({
-  params,
-}: {
-  params: { account: string; id: string };
-}) {
+export default async function Page(
+  props: {
+    params: Promise<{ account: string; id: string }>;
+  }
+) {
+  const params = await props.params;
   const { media, metrics } = await getMediaMetrics(params.account, params.id);
 
   if (!media) return null;

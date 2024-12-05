@@ -69,13 +69,13 @@ async function getTokenInfo(searchParams: {
   return (await res.json()) as { data: FacebookTokenResponse };
 }
 
-export default async function Page({
-  params,
-  searchParams,
-}: {
-  params: { slug: string };
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function Page(
+  props: {
+    params: Promise<{ slug: string }>;
+    searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+  }
+) {
+  const searchParams = await props.searchParams;
   const data = await getData(searchParams);
   const tokenInfo = await getTokenInfo(searchParams);
 

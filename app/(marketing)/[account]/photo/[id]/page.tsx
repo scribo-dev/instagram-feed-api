@@ -2,11 +2,12 @@ import { scrape } from "@/lib/scrape";
 import InstagramDialog from "../../@modal/(.)photo/[id]/InstagramDialog";
 import Image from "next/image";
 
-export default async function PhotoPage({
-  params,
-}: {
-  params: { account: string; id: string };
-}) {
+export default async function PhotoPage(
+  props: {
+    params: Promise<{ account: string; id: string }>;
+  }
+) {
+  const params = await props.params;
   let images = await scrape(params.account);
 
   let selectedImage = images.find((i) => i.slug === params.id);

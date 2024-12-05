@@ -10,12 +10,11 @@ import { LineChart, RefreshCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 type PageProps = {
-  params: { account: string };
+  params: Promise<{ account: string }>;
 };
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params;
   return {
     title: `@${params.account} Instagram Feed API`,
     description: `Feed API from @${params.account}`,
@@ -56,7 +55,8 @@ async function getData(account: string) {
   return { images, stories };
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page(props: PageProps) {
+  const params = await props.params;
   let { images, stories } = await getData(params.account);
 
   return (

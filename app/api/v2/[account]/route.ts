@@ -159,12 +159,11 @@ async function checkPermission(
  */
 export async function GET(
   request: NextRequest,
-  {
-    params,
-  }: {
-    params: { account: string; type?: string };
+  props: {
+    params: Promise<{ account: string; type?: string }>;
   }
 ) {
+  const params = await props.params;
   const url = new URL(request.url);
   const sizes = url.searchParams.get("sizes");
   // const compression = parseInt(url.searchParams.get("compression") || "23");
@@ -298,12 +297,11 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  {
-    params,
-  }: {
-    params: { account: string; type?: string };
+  props: {
+    params: Promise<{ account: string; type?: string }>;
   }
 ) {
+  const params = await props.params;
   const {
     account: instagramAccount,
     token,
@@ -371,12 +369,11 @@ export async function POST(
  */
 export async function DELETE(
   request: NextRequest,
-  {
-    params,
-  }: {
-    params: { account: string; type?: string };
+  props: {
+    params: Promise<{ account: string; type?: string }>;
   }
 ) {
+  const params = await props.params;
   const {
     account: instagramAccount,
     token,

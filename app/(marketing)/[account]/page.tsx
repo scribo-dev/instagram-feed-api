@@ -5,12 +5,11 @@ import APITabs from "./APITabs";
 import Link from "next/link";
 
 type PageProps = {
-  params: { account: string };
+  params: Promise<{ account: string }>;
 };
 
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
+export async function generateMetadata(props: PageProps): Promise<Metadata> {
+  const params = await props.params;
   return {
     title: `@${params.account} Instagram Feed API`,
     description: `Feed API from @${params.account}`,
@@ -23,7 +22,8 @@ async function getData(account: string) {
   return res;
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page(props: PageProps) {
+  const params = await props.params;
   let images = await getData(params.account);
 
   return (

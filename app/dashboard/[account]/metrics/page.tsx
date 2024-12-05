@@ -16,13 +16,14 @@ import { MetricsDateRangePicker } from "./DatePicker";
 import { ExclamationTriangleIcon } from "@radix-ui/react-icons";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
-export default async function Page({
-  params,
-  searchParams,
-}: {
-  params: { account: string };
-  searchParams: any;
-}) {
+export default async function Page(
+  props: {
+    params: Promise<{ account: string }>;
+    searchParams: Promise<any>;
+  }
+) {
+  const searchParams = await props.searchParams;
+  const params = await props.params;
   let dates: string[] = [];
   if (searchParams.from && searchParams.to)
     dates = [searchParams.from, searchParams.to];

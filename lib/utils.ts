@@ -6,7 +6,7 @@ export function cn(...inputs: ClassValue[]) {
 }
 export type InstagramImage = {
   slug: string;
-  type: "video" | "image";
+  type: "video" | "image" | "carousel_album";
   image: string;
   description: string;
   takenAt: string;
